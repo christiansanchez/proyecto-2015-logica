@@ -1,4 +1,4 @@
-package servidor.daos;
+package servidor.persistencia.daos;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,9 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import servidor.excepciones.ListarRolesException;
-import servidor.persistencia.PoolConexiones.Conexion;
-import servidor.persistencia.PoolConexiones.IConexion;
 import servidor.persistencia.consultas.ConsultaRoles;
+import servidor.persistencia.poolConexiones.Conexion;
+import servidor.persistencia.poolConexiones.IConexion;
 import servidor.valueObjects.VORoles;
 
 public abstract class DAORoles implements IDAORoles{
