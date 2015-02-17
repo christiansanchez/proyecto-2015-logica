@@ -1,10 +1,10 @@
-package servidor.daos;
+package servidor.persistencia.daos;
 
 import java.util.List;
 
 import servidor.excepciones.BuscarEstadoPartidaException;
 import servidor.excepciones.ListarEstadoPartidaException;
-import servidor.persistencia.PoolConexiones.IConexion;
+import servidor.persistencia.poolConexiones.IConexion;
 import servidor.valueObjects.VOEstadoPartida;
 
 public interface IDAOEstadoPartida {

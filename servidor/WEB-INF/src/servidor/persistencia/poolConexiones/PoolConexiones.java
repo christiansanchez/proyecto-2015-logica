@@ -1,4 +1,4 @@
-package servidor.persistencia.PoolConexiones;
+package servidor.persistencia.poolConexiones;
 
 import java.io.FileInputStream;
 import java.io.IOException;
