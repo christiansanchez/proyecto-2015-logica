@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <service>
-	<description> Web service juego Barco Carguero vs Piratas</description>
+	<description> Web service </description>
 	<messageReceivers>
 		<messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out"
 		class="org.apache.axis2.rpc.receivers.RPCMessageReceiver" />
 	</messageReceivers>
-	<parameter name="ServiceClass">servidor_logica.logica.FachadaWService</parameter>
-	<operation name="guardarPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
-	<operation name="crearPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
-	<operation name="abandonarPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
-	<operation name="unirsePartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
-	<operation name="iniciarPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
+	<parameter name="ServiceClass">servidor.logica.FachadaWService</parameter>
+	<operation name="existePartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
+	<operation name="setPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
+	<operation name="getUnirsePartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
+	<operation name="getCargarPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
+	<operation name="setCargarPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
+	<operation name="setUnirsePartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
 </service>

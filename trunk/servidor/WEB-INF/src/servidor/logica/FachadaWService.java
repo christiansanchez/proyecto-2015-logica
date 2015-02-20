@@ -11,23 +11,27 @@ public class FachadaWService extends Fachada{
 		super();
 	}
 	
-	public boolean guardarPartida(){
+	public boolean existePartida(String nombrePartida){
 		return false;
 	}
 	
-	public void crearPartida() {
-		
+	public boolean setPartida(String nombrePartida, String rolPartida){		
+		return false;
 	}
 	
-	public void abandonarPartida(){
-		
+	public String getUnirsePartida(){
+		return null;
 	}
 	
-	public void unirsePartida(){
-		
+	public String getCargarPartida(){
+		return null;
 	}
 	
-	public void iniciarPartida(){
-		
+	public boolean setCargarPartida(String nombrePartida, String rolPartida){
+		return false;
+	}
+	
+	public boolean setUnirsePartida(String nombrePartida, String rolPartida){
+		return false;
 	}
 }
