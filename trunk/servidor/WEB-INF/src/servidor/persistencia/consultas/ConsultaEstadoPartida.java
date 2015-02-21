@@ -3,12 +3,12 @@ package servidor.persistencia.consultas;
 public class ConsultaEstadoPartida {
 
 	public String allEstadosPartidas(){
-		String query = "select * from estados_partidas";
+		String query = "select estado from partidas";
 		return query;
 	}
 	
 	public String findPartidaNombre(){
-		String query = "select * from estados_partidas where = ?";
+		String query = "select * from partidas where = ?";
 		return query;
 	}
 }
