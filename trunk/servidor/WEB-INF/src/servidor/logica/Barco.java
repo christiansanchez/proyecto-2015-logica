@@ -1,26 +1,40 @@
 package servidor.logica;
+
+import java.util.TreeMap;
+
 /*
  *Clase encagadaa del manejo de la figuras de tipo barco,
  *las cuales son utilizadas por el rol barco carguero
  **/
 public class Barco extends Figura{
 	
-	private int mangueras;
+	private TreeMap<Integer, Boolean> mangueras;
 	
-	public Barco(float posicionX, float posicionY, int cantMangueras){
-		super(posicionX, posicionY);
-		this.mangueras = cantMangueras;
+	public Barco(){
+		super(0, 0);
 	}
 	
-	public void setMangueras(int cantMangueras){
-		this.mangueras = cantMangueras;
+	public void barcoNuevo(){		
+		this.setMangueras(1, true);
+		this.setMangueras(2, true);
+		this.setMangueras(3, true);
+		this.setMangueras(4, true);
+		this.setMangueras(5, true);
+		this.setMangueras(6, true);
+		this.setMangueras(7, true);
+		this.setMangueras(8, true);
 	}
 	
-	public int getMangueras(){
-		return this.mangueras;
+	public void setMangueras(int posicion, boolean estado){
+		this.mangueras.put((Integer)posicion, (Boolean)estado);
 	}
 	
-	public void mangueraDestruida(){
-		this.mangueras = this.mangueras - 1;
+	public boolean getMangueras(int posicion){
+		return this.mangueras.get((Integer)posicion);
+	}
+	
+	public void mangueraDestruida(int posicion){		
+		this.mangueras.remove((Integer)posicion);
+		this.mangueras.put((Integer)posicion, (Boolean)false);
 	}
 }

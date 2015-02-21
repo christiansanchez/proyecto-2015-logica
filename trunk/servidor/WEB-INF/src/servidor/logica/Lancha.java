@@ -7,9 +7,9 @@ public class Lancha extends Figura{
 
 	private int impactosPermitidos;
 	
-	public Lancha(float posicionX, float posicionY, int impPermitidos) {
-		super(posicionX, posicionY);
-		this.impactosPermitidos = impPermitidos;
+	public Lancha() {
+		super(0, 0);
+		this.impactosPermitidos = 3;
 	}
 	
 	public void setImpactosPermitidos(int impPermitidos){
