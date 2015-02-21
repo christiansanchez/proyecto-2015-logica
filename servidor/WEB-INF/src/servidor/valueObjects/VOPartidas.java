@@ -13,7 +13,7 @@ public class VOPartidas implements Serializable{
 		private Mapa mapa;
 		private EstadoPartida estado;
 		
-		public VOPartidas(String nombre2) {
+		public VOPartidas() {
 			// TODO Auto-generated constructor stub
 		}
 

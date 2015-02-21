@@ -10,7 +10,6 @@ import servidor.excepciones.BorrarPartidasException;
 import servidor.excepciones.BuscarPartidasException;
 import servidor.excepciones.ExistePartidasException;
 import servidor.excepciones.IngresarPartidasException;
-import servidor.excepciones.ListarPartidasException;
 import servidor.valueObjects.VOPartidas;
 import servidor.valueObjects.VOFigurasPartidas;
 import servidor.persistencia.consultas.ConsultaPartidas;
@@ -26,28 +25,28 @@ public class DAOPartidas implements IDAOPartidas{
 	}
 	
 	
-	public List<VOPartidas> listarPartidas(IConexion iConn) throws ListarPartidasException 
-	{
-		try	{
-			String query = this.consultas.allPartidas();
-			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);
-			ResultSet rs = pstmt.executeQuery();
-			List<VOPartidas> list = new LinkedList<VOPartidas>();			
-			while(rs.next()){
-				int idPartida = rs.getInt("id");
-				String nombre = rs.getString("nombre");				
-				VOPartidas voPartidas = new VOPartidas(nombre);
-				voPartidas.setIdPartida(idPartida);								
-				list.add(voPartidas);
-			}
-			rs.close();
-			pstmt.close();
-			return list;
-		}
-		catch(SQLException eSql) {
-			throw new ListarPartidasException();
-		}
-	}
+//	public List<VOPartidas> listarPartidas(IConexion iConn) throws ListarPartidasException 
+//	{
+//		try	{
+//			String query = this.consultas.allPartidas();
+//			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);
+//			ResultSet rs = pstmt.executeQuery();
+//			List<VOPartidas> list = new LinkedList<VOPartidas>();			
+//			while(rs.next()){
+//				int idPartida = rs.getInt("id");
+//				String nombre = rs.getString("nombre");				
+//				VOPartidas voPartidas = new VOPartidas(nombre);
+//				voPartidas.setIdPartida(idPartida);								
+//				list.add(voPartidas);
+//			}
+//			rs.close();
+//			pstmt.close();
+//			return list;
+//		}
+//		catch(SQLException eSql) {
+//			throw new ListarPartidasException();
+//		}
+//	}
 
 	
 	public int insert(IConexion iConn, String alias, int idNivel) throws IngresarPartidasException {
@@ -133,12 +132,12 @@ public class DAOPartidas implements IDAOPartidas{
 					String nombre = rs.getString("alias");
 					//no tengo claro como invocar el tipo de datos MAPA y EstadoPartida 
 					//por eso puse string
-					String mapa = rs.getString(mapa);
+					//String mapa = rs.getString(mapa);
 					String estado = rs.getString("estado");					
 					voPartida.setNombre(nombre);
 					voPartida.setIdPartida(idPartida);			
-					voPartida.setMapa(mapa);
-					voPartida.setEstado(estado);
+					//voPartida.setMapa(mapa);
+					//voPartida.setEstado(estado);
 				}
 				rs.close();
 				pstmt.close();

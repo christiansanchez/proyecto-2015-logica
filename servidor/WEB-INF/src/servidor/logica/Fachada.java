@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import servidor.excepciones.FachadaException;
+import servidor.logica.monitor.MonitorLecturaEscritura;
 import servidor.persistencia.fabricas.FabricaAbstracta;
 import servidor.persistencia.poolConexiones.IPoolConexiones;
 
@@ -14,8 +15,10 @@ import servidor.persistencia.poolConexiones.IPoolConexiones;
  */
 public class Fachada {
 	/*Atributos*/	
-	private static Fachada instancia = null;	
-	private IPoolConexiones ipool;
+	private static Fachada instancia = null;
+	protected Partidas partidas;
+	protected IPoolConexiones ipool;
+	protected MonitorLecturaEscritura monitorJuego;
 	
 	public static Fachada getInstancia() throws FachadaException{
 		if(instancia == null) {
@@ -25,9 +28,9 @@ public class Fachada {
 	}
 	
 	protected Fachada() throws FachadaException{
-		Properties prop = new Properties();		
-		String nombreArchivo = "config.properties";		
-
+		this.partidas = new Partidas();
+		Properties prop = new Properties();	
+		String nombreArchivo = "config.properties";
 		try {
 			prop.load(new FileInputStream(nombreArchivo));
 			String pool =  prop.getProperty("nameClassPool");
