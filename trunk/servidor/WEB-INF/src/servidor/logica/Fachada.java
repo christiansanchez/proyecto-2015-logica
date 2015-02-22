@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import servidor.excepciones.FachadaException;
 import servidor.logica.monitor.MonitorLecturaEscritura;
+import servidor.persistencia.daos.IDAOPartidas;
 import servidor.persistencia.fabricas.FabricaAbstracta;
 import servidor.persistencia.poolConexiones.IPoolConexiones;
 
@@ -19,6 +20,7 @@ public class Fachada {
 	protected Partidas partidas;
 	protected IPoolConexiones ipool;
 	protected MonitorLecturaEscritura monitorJuego;
+	protected IDAOPartidas iPartidas;
 	
 	public static Fachada getInstancia() throws FachadaException{
 		if(instancia == null) {
@@ -34,12 +36,11 @@ public class Fachada {
 		try {
 			prop.load(new FileInputStream(nombreArchivo));
 			String pool =  prop.getProperty("nameClassPool");
-			//TODO: descomentar esto y agregarlo cuando este desarrollada el pool de conexiones
 			this.ipool = (IPoolConexiones)Class.forName(pool).newInstance();
 
 			String fabrica =  prop.getProperty("nameClassFactory");
-			//TODO: descomentar esto y agregarlo cuando este desarrollada la persistencia
 			FabricaAbstracta iFabrica = ((FabricaAbstracta)Class.forName(fabrica).newInstance());
+			this.iPartidas = iFabrica.crearDAOPartidas();
 
 		} catch (IOException | InstantiationException | IllegalAccessException
 				| ClassNotFoundException e ) {
