@@ -1,7 +1,11 @@
 package servidor.logica;
 
+import java.util.List;
+
 import servidor.excepciones.FachadaException;
 import servidor.excepciones.MonitorException;
+import servidor.excepciones.PersistenciaException;
+import servidor.persistencia.poolConexiones.IConexion;
 /*
  * Clase encargada de definir la logica y los metodos utilizados
  * desde el web service.
@@ -12,11 +16,13 @@ public class FachadaWService extends Fachada{
 		super();
 	}
 	
-	public boolean hasPartida(String nombrePartida){	
+	public boolean hasPartida(String nombrePartida){
+		//TERMINADO
 		return this.partidas.member(nombrePartida);
 	}
 	
 	public boolean setPartida(String nombrePartida, String rolPartida, String tipoMapa){
+		//TERMINADO
 		boolean resultado = false;
 		try{
 			this.monitorJuego.comenzarEscritura();
@@ -59,6 +65,7 @@ public class FachadaWService extends Fachada{
 	}
 	
 	public String getUnirsePartida(){
+		//TERMINADO
 		String resultado = "";
 		try{
 			this.monitorJuego.comenzarLectura();
@@ -74,7 +81,42 @@ public class FachadaWService extends Fachada{
 	}
 	
 	public String getCargarPartida(){
-		return null;
+		//AUN SIN TERMINAR
+		String resultado = "";
+		IConexion iConn = null;
+		try{
+			this.monitorJuego.comenzarLectura();
+			iConn = this.ipool.obtenerConexion(false);			
+			//TODO: aca falta desarrollar para completar la funcionalidad.
+			//aca tengo que obtener el listado de la base de datos
+			
+			//tengo q transformarlo a el string que se debe enviar
+			resultado = "";
+		}
+		catch(MonitorException | PersistenciaException e){
+			resultado = "";
+			try{                             
+                this.ipool.liberarConexion(iConn, false);
+                iConn = null;
+                this.monitorJuego.terminarLectura();                           
+	        }
+	        catch(PersistenciaException e1) {
+	        	this.monitorJuego.terminarLectura();
+	        }		
+		}
+		finally{			
+			try{
+				if(iConn != null) {				
+					this.ipool.liberarConexion(iConn, true);
+					this.monitorJuego.terminarLectura();					
+				}				
+			}
+			catch(PersistenciaException e){
+				this.monitorJuego.terminarLectura();
+				resultado = "";
+			}
+		}
+		return resultado;
 	}
 	
 	public boolean setCargarPartida(String nombrePartida, String rolPartida){
@@ -82,6 +124,40 @@ public class FachadaWService extends Fachada{
 	}
 	
 	public boolean setUnirsePartida(String nombrePartida, String rolPartida){
-		return false;
+		//AUN SIN TERMINAR
+		//TODO:los datos se van a cargar cuando se haga set cargar partida
+		//voy a tener que controlar que si los jugadores ya estan cargados, no pisarlos.
+		//porq si esta cargado esa info fue la que se trajo desde la bd.
+		boolean resultado = false;
+		try{
+			this.monitorJuego.comenzarEscritura();
+			if(!this.partidas.member(nombrePartida)) {
+				Partida partidaCreada = this.partidas.find(nombrePartida);				
+				Jugador jugador2 = null;
+				if(rolPartida.equals("BARCOCARGUERO")){					
+					Barco barco = new Barco();
+					barco.barcoNuevo();
+					BarcoCarguero barcoCarguero = new BarcoCarguero(barco);
+					jugador2 = new Jugador(barcoCarguero);
+//					partidaNueva = new Partida(nombrePartida, jugador1, jugador2, mapa);
+				}
+				else{
+					Pirata pirata = new Pirata();
+					pirata.pirataNuevo();
+					jugador2 = new Jugador(pirata);
+					partidaCreada.setLanchaPirata(jugador2);
+//					
+				}
+//				this.partidas.insert(partidaNueva);
+				resultado = true;
+			}			
+		}
+		catch(MonitorException e){
+			resultado = false;
+		}
+		finally{
+			this.monitorJuego.terminarEscritura();
+		}
+		return resultado;
 	}
 }
