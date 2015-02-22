@@ -3,9 +3,11 @@ package servidor.logica;
 import java.util.List;
 
 import servidor.excepciones.FachadaException;
+import servidor.excepciones.ListarPartidasCreadasException;
 import servidor.excepciones.MonitorException;
 import servidor.excepciones.PersistenciaException;
 import servidor.persistencia.poolConexiones.IConexion;
+import servidor.valueObjects.VOPartida;
 /*
  * Clase encargada de definir la logica y los metodos utilizados
  * desde el web service.
@@ -17,12 +19,10 @@ public class FachadaWService extends Fachada{
 	}
 	
 	public boolean hasPartida(String nombrePartida){
-		//TERMINADO
 		return this.partidas.member(nombrePartida);
 	}
 	
 	public boolean setPartida(String nombrePartida, String rolPartida, String tipoMapa){
-		//TERMINADO
 		boolean resultado = false;
 		try{
 			this.monitorJuego.comenzarEscritura();
@@ -65,7 +65,6 @@ public class FachadaWService extends Fachada{
 	}
 	
 	public String getUnirsePartida(){
-		//TERMINADO
 		String resultado = "";
 		try{
 			this.monitorJuego.comenzarLectura();
@@ -81,19 +80,24 @@ public class FachadaWService extends Fachada{
 	}
 	
 	public String getCargarPartida(){
-		//AUN SIN TERMINAR
 		String resultado = "";
 		IConexion iConn = null;
 		try{
 			this.monitorJuego.comenzarLectura();
 			iConn = this.ipool.obtenerConexion(false);			
-			//TODO: aca falta desarrollar para completar la funcionalidad.
-			//aca tengo que obtener el listado de la base de datos
-			
-			//tengo q transformarlo a el string que se debe enviar
-			resultado = "";
+			List<VOPartida> partidasCreadas = this.iPartidas.listarPartidasCreadas(iConn);
+			String partidaStr = "";
+			for (VOPartida voPartida : partidasCreadas) {
+				partidaStr += "nombrePartida:\"" + voPartida.getNombre() + "\"," + 
+						  	  "tipoRolDisponible:\"\"," +
+						      "tipoMapa:\"" + voPartida.getTipoMapaStr() + "\";";				 
+			}
+			resultado += partidaStr;
+			if (!resultado.isEmpty()){
+				resultado = resultado.substring(0, resultado.length()-1);
+			}	
 		}
-		catch(MonitorException | PersistenciaException e){
+		catch(MonitorException | PersistenciaException | ListarPartidasCreadasException e){
 			resultado = "";
 			try{                             
                 this.ipool.liberarConexion(iConn, false);
