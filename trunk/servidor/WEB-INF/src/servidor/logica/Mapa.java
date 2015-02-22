@@ -15,4 +15,15 @@ public class Mapa {
 	public TipoMapa getTipoMapa(){
 		return this.tipoMapa;
 	}
+	
+	public String getTipoMapaStr(){
+		String tipoMapaStr = "";
+		if (this.tipoMapa == TipoMapa.ISLAS){
+			tipoMapaStr = "ISLAS";
+		}
+		else {
+			tipoMapaStr = "MARABIERTO";
+		}
+		return tipoMapaStr;
+	}
 }

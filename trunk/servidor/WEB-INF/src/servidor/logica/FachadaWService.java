@@ -28,8 +28,7 @@ public class FachadaWService extends Fachada{
 				else{
 					mapaElegido = TipoMapa.ISLAS;
 				}
-				Mapa mapa = new Mapa(mapaElegido);
-				EstadoPartida estadoPartida = EstadoPartida.CREADA;
+				Mapa mapa = new Mapa(mapaElegido);				
 				Partida partidaNueva = null;
 				Jugador jugador1 = null;
 				Jugador jugador2 = null;
@@ -38,13 +37,13 @@ public class FachadaWService extends Fachada{
 					barco.barcoNuevo();
 					BarcoCarguero barcoCarguero = new BarcoCarguero(barco);
 					jugador1 = new Jugador(barcoCarguero);
-					partidaNueva = new Partida(nombrePartida, jugador1, jugador2, mapa, estadoPartida);
+					partidaNueva = new Partida(nombrePartida, jugador1, jugador2, mapa);
 				}
 				else{
 					Pirata pirata = new Pirata();
 					pirata.pirataNuevo();
 					jugador1 = new Jugador(pirata);
-					partidaNueva = new Partida(nombrePartida, jugador2, jugador1, mapa, estadoPartida);
+					partidaNueva = new Partida(nombrePartida, jugador2, jugador1, mapa);
 				}
 				this.partidas.insert(partidaNueva);
 				resultado = true;
@@ -60,7 +59,18 @@ public class FachadaWService extends Fachada{
 	}
 	
 	public String getUnirsePartida(){
-		return null;
+		String resultado = "";
+		try{
+			this.monitorJuego.comenzarLectura();
+			resultado = this.partidas.getPartidasDisponibles();
+		}
+		catch(MonitorException e){
+			resultado = "";
+		}
+		finally{
+			this.monitorJuego.terminarLectura();
+		}
+		return resultado;
 	}
 	
 	public String getCargarPartida(){

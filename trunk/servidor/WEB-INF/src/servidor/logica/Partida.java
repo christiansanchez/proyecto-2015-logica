@@ -9,12 +9,12 @@ public class Partida {
 	private Mapa mapa;
 	private EstadoPartida estadoPartida;
 	
-	public Partida(String nombre, Jugador barco, Jugador lancha, Mapa mapa, EstadoPartida estadoPartida)  {		
+	public Partida(String nombre, Jugador barco, Jugador lancha, Mapa mapa)  {		
 		this.nombre = nombre;
 		this.barcoCarguero = barco;
 		this.lanchaPirata = lancha;
 		this.mapa = mapa;
-		this.estadoPartida = estadoPartida;
+		this.estadoPartida = EstadoPartida.CREADA;
 	}
 
 	public String getNombre() {
@@ -56,6 +56,23 @@ public class Partida {
 	public void setEstadoPartida(EstadoPartida estadoPartida) {
 		this.estadoPartida = estadoPartida;
 	}
-
 	
+	public boolean hasCreada(){
+		return this.estadoPartida == EstadoPartida.CREADA;
+	}
+	
+	public String getRolDisponible(){
+		String rolDisponible = "";
+		if (this.barcoCarguero != null){
+			rolDisponible = "BARCOCARGUERO";
+		}
+		else{
+			rolDisponible = "PIRATA";
+		}
+		return rolDisponible;
+	}
+	
+	public String getTipoMapa(){
+		return this.mapa.getTipoMapaStr();
+	}
 }

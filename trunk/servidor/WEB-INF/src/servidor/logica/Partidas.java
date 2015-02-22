@@ -28,5 +28,22 @@ public class Partidas{
 	public void delete(String nombre) {		
 		this.partidas.remove(nombre);
 	}
+	
+	public String getPartidasDisponibles(){
+		String listadoPartidas = "";		
+		for(Partida partida: this.partidas.values()){
+			String partidaStr = "";
+			if (partida.hasCreada()){				
+				partidaStr += "nombrePartida:" + partida.getNombre() + "," + 
+							  "tipoRolDisponible:" + partida.getRolDisponible() + "," +
+							  "tipoMapa:" + partida.getTipoMapa() + ";";
+			}
+			listadoPartidas += partidaStr;
+		}
+		if (!listadoPartidas.isEmpty()){
+			listadoPartidas = listadoPartidas.substring(0, listadoPartidas.length()-1);
+		}	
+		return listadoPartidas;
+	}
 
 }
