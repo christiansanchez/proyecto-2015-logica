@@ -38,9 +38,9 @@ public class DAOFigurasPartidas implements IDAOFigurasPartidas{
 				int posicionY = rs.getInt("posicion_y");
 				int impactosPermitidos = rs.getInt("impactosPermitidos");
 				int mangueras = rs.getInt("mangueras");
-				VOFigurasPartidas voFigPartidas = new VOFigurasPartidas(id, idPartida, idFigura, posicionX, posicionY,
-																		impactosPermitidos, mangueras);
-				list.add(voFigPartidas);
+//				VOFigurasPartidas voFigPartidas = new VOFigurasPartidas(id, idPartida, idFigura, posicionX, posicionY,
+//																		impactosPermitidos, mangueras);
+//				list.add(voFigPartidas);
 			}
 			rs.close();
 			pstmt.close();
@@ -56,17 +56,17 @@ public class DAOFigurasPartidas implements IDAOFigurasPartidas{
 			String query = this.consultas.insertarFigurasPartidas();
 			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);
 			pstmt.setInt(1, idPartida);
-			pstmt.setInt(2, fig.geidFigura());
-			pstmt.setInt(3), fig.getPosicionX());
-			pstmt.setInt(4, fig.getPosicionY());
+//			pstmt.setInt(2, fig.geidFigura());
+//			pstmt.setInt(3), fig.getPosicionX());
+//			pstmt.setInt(4, fig.getPosicionY());
 			
 			int impactosPermitidos = 0;
 			int mangueras = 0;
-			if(fig.getClass().equals("Barco") {
-				mangueras = (fig.getMangueras();
+			if(fig.getClass().equals("Barco")) {
+//				mangueras = (fig.getMangueras();
 			}
-			else if(fig.getClass().equals("Lancha"){
-				impactosPermitidos = (fig.getImpcatosPermitidos();
+			else if(fig.getClass().equals("Lancha")){
+//				impactosPermitidos = (fig.getImpcatosPermitidos();
 			}
 					  						
 		} 
@@ -94,9 +94,9 @@ public class DAOFigurasPartidas implements IDAOFigurasPartidas{
 				int posicionY = rs.getInt("posicion_y");
 				int impactosPermitidos = rs.getInt("impactosPermitidos");
 				int mangueras = rs.getInt("mangueras");
-				VOFigurasPartidas voFigPartida = new VOFigurasPartidas(id, idPartida, idFigura, posicionX, 
-																   posicionY, impactosPermitidos, mangueras);
-				list.add(voFigPartida);
+//				VOFigurasPartidas voFigPartida = new VOFigurasPartidas(id, idPartida, idFigura, posicionX, 
+//																   posicionY, impactosPermitidos, mangueras);
+//				list.add(voFigPartida);
 			}
 			rs.close();
 			pstmt.close();
