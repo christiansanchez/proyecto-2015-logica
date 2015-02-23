@@ -141,24 +141,23 @@ public class FachadaWService extends Fachada{
 				if (partidaCreada.getEstadoPartida() == EstadoPartida.CREADA){
 					Jugador jugador2 = null;
 					Jugador jugadorPartida = null;
-					if(rolPartida.equals("BARCOCARGUERO")){					
-						Barco barco = new Barco();
-						barco.barcoNuevo();
-						BarcoCarguero barcoCarguero = new BarcoCarguero(barco);
-						jugador2 = new Jugador(barcoCarguero);
+					if(rolPartida.equals("BARCOCARGUERO")){											
 						jugadorPartida = partidaCreada.getBarcoCarguero();
 						if(jugadorPartida == null){
+							Barco barco = new Barco();
+							barco.barcoNuevo();
+							BarcoCarguero barcoCarguero = new BarcoCarguero(barco);
+							jugador2 = new Jugador(barcoCarguero);
 							partidaCreada.setBarcoCarguero(jugador2);
 						}
 					}
-					else{
-						Pirata pirata = new Pirata();
-						pirata.pirataNuevo();
-						jugador2 = new Jugador(pirata);
-						partidaCreada.setLanchaPirata(jugador2);
+					else{						
 						jugadorPartida = partidaCreada.getLanchaPirata();
 						if(jugadorPartida == null){
-							partidaCreada.setLanchaPirata(jugador2);
+							Pirata pirata = new Pirata();
+							pirata.pirataNuevo();
+							jugador2 = new Jugador(pirata);
+							partidaCreada.setLanchaPirata(jugador2);							
 						}
 					}
 					EstadoPartida estadoPartida = EstadoPartida.ENCURSO;
