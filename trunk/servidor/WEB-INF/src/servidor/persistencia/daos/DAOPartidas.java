@@ -37,7 +37,7 @@ public class DAOPartidas implements IDAOPartidas{
 			ResultSet rs = pstmt.executeQuery();
 			List<VOPartida> list = new LinkedList<VOPartida>();	
 			while(rs.next()){
-				int idPartida = rs.getInt("id");
+				int idPartida = rs.getInt("id_partida");
 				String nombrePartida = rs.getString("nombre");				
 				VOPartida voPartida = new VOPartida(idPartida, nombrePartida);
 				String tipoMapaStr = rs.getString("tipo_mapa");

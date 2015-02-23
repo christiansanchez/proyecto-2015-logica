@@ -20,19 +20,13 @@ public class PoolConexiones implements IPoolConexiones{
 	private int tope;
 	private Conexion[] conexiones;
 	
-	public PoolConexiones() throws PersistenciaException
-	{
-		//leo archivo de configuracion
+	public PoolConexiones() throws PersistenciaException{
 		Properties prop = new Properties();
-		String nombreArchivo = "src/configFiles/config.properties";
-		try 
-		{			
-			//leo archivo de configuracion			
-			prop.load( new FileInputStream(nombreArchivo));			
-			//cargo driver
+		String nombreArchivo = "C:\\Documents and Settings\\christian\\Escritorio\\Proyecto 1\\workspace\\servidor\\configFiles\\config.properties";
+		try{	
+			prop.load( new FileInputStream(nombreArchivo));		
 			this.driver = prop.getProperty("driver");			
-			Class.forName(this.driver);			
-			//datos para conexion
+			Class.forName(this.driver);	
 			this.url = prop.getProperty("url");				
 			this.user = prop.getProperty("user");	
 			this.password = prop.getProperty("pass");		
@@ -42,53 +36,41 @@ public class PoolConexiones implements IPoolConexiones{
 			this.tope = 0;
 			this.conexiones = new Conexion[this.tamanio];			
 		} 
-		catch (IOException | ClassNotFoundException e) 
-		{			
+		catch (IOException | ClassNotFoundException e){			
 			throw new PersistenciaException();
 		} 				
 	}
 
-	public synchronized void liberarConexion(IConexion conection, boolean ok) throws PersistenciaException
-	{				
-		try 
-		{
-			if(ok)
-			{								
+	public synchronized void liberarConexion(IConexion conection, boolean ok) throws PersistenciaException{				
+		try{
+			if(ok){								
 				((Conexion)conection).getConnection().commit();				 
 			}
-			else
-			{
+			else{
 				((Conexion)conection).getConnection().rollback();
 			}					
 		}
-		catch (SQLException e) 
-		{			
+		catch (SQLException e){			
 			throw new PersistenciaException();
 		}
-		finally
-		{
+		finally{
 			this.tope++;
 			this.conexiones[this.tope - 1] = ((Conexion)conection);
 			notify();
 		}
 	}
 
-	public synchronized IConexion obtenerConexion(boolean modifica) throws PersistenciaException
-	{
-		try 
-		{
-			if((this.creadas < this.tamanio) && (this.tope == 0))
-			{
+	public synchronized IConexion obtenerConexion(boolean modifica) throws PersistenciaException{
+		try {
+			if((this.creadas < this.tamanio) && (this.tope == 0)){
 				this.creadas++;
 				Conexion conn = new Conexion(DriverManager.getConnection(this.url, this.user, this.password));
 				conn.getConnection().setTransactionIsolation(this.nivelTransaccionalidad);
 				conn.getConnection().setAutoCommit(false);				
 				return ((IConexion)conn);				 
 			}
-			else
-			{					
-				while(this.tope == 0)
-				{
+			else{					
+				while(this.tope == 0){
 					wait();
 				}
 				this.tope--;
@@ -97,12 +79,10 @@ public class PoolConexiones implements IPoolConexiones{
 				return (IConexion)auxCon;									
 			}
 		}	
-		catch (InterruptedException e) 
-		{
+		catch (InterruptedException e){
 			throw new PersistenciaException();
 		}	
-		catch (SQLException e) 
-		{
+		catch (SQLException e){
 			throw new PersistenciaException();
 		}
 	}		
