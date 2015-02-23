@@ -132,33 +132,40 @@ public class FachadaWService extends Fachada{
 	}
 	
 	public boolean setUnirsePartida(String nombrePartida, String rolPartida) throws FachadaException{
-		//AUN SIN TERMINAR
-		//TODO:los datos se van a cargar cuando se haga set cargar partida
-		//voy a tener que controlar que si los jugadores ya estan cargados, no pisarlos.
-		//porq si esta cargado esa info fue la que se trajo desde la bd.
 		boolean resultado = false;
 		Fachada instanciaWS = Fachada.getInstancia();
 		try{
 			instanciaWS.monitorJuego.comenzarEscritura();
-			if(!instanciaWS.partidas.member(nombrePartida)) {
-				Partida partidaCreada = instanciaWS.partidas.find(nombrePartida);				
-				Jugador jugador2 = null;
-				if(rolPartida.equals("BARCOCARGUERO")){					
-					Barco barco = new Barco();
-					barco.barcoNuevo();
-					BarcoCarguero barcoCarguero = new BarcoCarguero(barco);
-					jugador2 = new Jugador(barcoCarguero);
-//					partidaNueva = new Partida(nombrePartida, jugador1, jugador2, mapa);
+			if(instanciaWS.partidas.member(nombrePartida)) {
+				Partida partidaCreada = instanciaWS.partidas.find(nombrePartida);
+				if (partidaCreada.getEstadoPartida() == EstadoPartida.CREADA){
+					Jugador jugador2 = null;
+					Jugador jugadorPartida = null;
+					if(rolPartida.equals("BARCOCARGUERO")){					
+						Barco barco = new Barco();
+						barco.barcoNuevo();
+						BarcoCarguero barcoCarguero = new BarcoCarguero(barco);
+						jugador2 = new Jugador(barcoCarguero);
+						jugadorPartida = partidaCreada.getBarcoCarguero();
+						if(jugadorPartida == null){
+							partidaCreada.setBarcoCarguero(jugador2);
+						}
+					}
+					else{
+						Pirata pirata = new Pirata();
+						pirata.pirataNuevo();
+						jugador2 = new Jugador(pirata);
+						partidaCreada.setLanchaPirata(jugador2);
+						jugadorPartida = partidaCreada.getLanchaPirata();
+						if(jugadorPartida == null){
+							partidaCreada.setLanchaPirata(jugador2);
+						}
+					}
+					EstadoPartida estadoPartida = EstadoPartida.ENCURSO;
+					partidaCreada.setEstadoPartida(estadoPartida);
+//					instanciaWS.partidas.insert(partidaNueva);
+					resultado = true;
 				}
-				else{
-					Pirata pirata = new Pirata();
-					pirata.pirataNuevo();
-					jugador2 = new Jugador(pirata);
-					partidaCreada.setLanchaPirata(jugador2);
-//					
-				}
-//				instanciaWS.partidas.insert(partidaNueva);
-				resultado = true;
 			}			
 		}
 		catch(MonitorException e){
