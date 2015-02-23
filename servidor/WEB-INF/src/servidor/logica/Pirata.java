@@ -9,6 +9,7 @@ public class Pirata extends Rol{
 	
 	public Pirata(){
 		super();
+		this.lanchas = new TreeMap<Integer, Lancha>();
 	}
 	
 	public void pirataNuevo(){

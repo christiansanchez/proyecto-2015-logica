@@ -16,7 +16,7 @@ import servidor.persistencia.poolConexiones.IPoolConexiones;
  */
 public class Fachada {
 	/*Atributos*/	
-	private static Fachada instancia = null;
+	protected static Fachada instancia = null;
 	protected Partidas partidas;
 	protected IPoolConexiones ipool;
 	protected MonitorLecturaEscritura monitorJuego;
@@ -30,9 +30,10 @@ public class Fachada {
 	}
 	
 	protected Fachada() throws FachadaException{
+		this.monitorJuego = MonitorLecturaEscritura.getInstancia();	
 		this.partidas = new Partidas();
 		Properties prop = new Properties();	
-		String nombreArchivo = "config.properties";
+		String nombreArchivo = "C:\\Documents and Settings\\christian\\Escritorio\\Proyecto 1\\workspace\\servidor\\configFiles\\config.properties";		
 		try {
 			prop.load(new FileInputStream(nombreArchivo));
 			String pool =  prop.getProperty("nameClassPool");

@@ -12,6 +12,7 @@ public class Barco extends Figura{
 	
 	public Barco(){
 		super(0, 0);
+		this.mangueras  = new TreeMap<Integer, Boolean>();
 	}
 	
 	public void barcoNuevo(){		
