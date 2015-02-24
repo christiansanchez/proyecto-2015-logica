@@ -63,12 +63,12 @@ public class VOFigurasPartidas {
 		this.impactosPermitidos = impactosPermitidos;
 	}
 	
-	public boolean isMangueras() {
+	public boolean getMangueras() {
 		return mangueras;
 	}
 	
 	public void setMangueras(boolean mangueras) {
 		this.mangueras = mangueras;
-	}
+	}	
 }
 

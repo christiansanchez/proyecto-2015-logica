@@ -67,8 +67,18 @@ public class DAOPartidas implements IDAOPartidas{
 			if (rs.next())
 			{
 				int idPartida = rs.getInt("id_partida");
-				String nombre = rs.getString("nombre");					
+				String nombre = rs.getString("nombre");				
 				voPartida = new VOPartida(idPartida, nombre);
+				String tipoMapaStr = rs.getString("tipo_mapa");
+				TipoMapa tipoMapa;
+				if (tipoMapaStr.equals("Islas")){
+					tipoMapa = TipoMapa.ISLAS;
+				}
+				else{
+					tipoMapa = TipoMapa.MARABIERTO;
+				}
+				Mapa mapa = new Mapa(tipoMapa);
+				voPartida.setMapa(mapa);
 			}
 			rs.close();
 			pstmt.close();
