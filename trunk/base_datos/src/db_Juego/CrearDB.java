@@ -81,10 +81,10 @@ public class CrearDB{
 					"id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, " +
 					"id_partida INT NOT NULL, " +
 					"id_figura INT NOT NULL, " +
-					"posicion_x INT NOT NULL, " +
-					"posicion_y INT NOT NULL, " +
+					"posicion_x FLOAT NOT NULL, " +
+					"posicion_y FLOAT NOT NULL, " +
 					"impactosPermitidos INT NOT NULL, " +
-					"mangueras INT NOT NULL, " +
+					"mangueras TINYINT(1) NOT NULL, " +
 					"FOREIGN KEY (id_partida) REFERENCES partidas(id_partida) ON DELETE CASCADE, " +
 					"FOREIGN KEY (id_figura) REFERENCES figuras(id_figura)" +				
 					 ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";			
