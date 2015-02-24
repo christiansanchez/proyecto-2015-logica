@@ -48,13 +48,14 @@ public class CrearDB{
 			
 			String createTableFigura = "CREATE TABLE figuras (" +
 				"id_figura INT NOT NULL PRIMARY KEY, " +
-				"posX INT NOT NULL, " + 
-				"posY INT NOT NULL, " +
-				"angulo INT NOT NULL, " +
-				"barco TINYINT(1) NOT NULL, " +
-				"lancha TINYINT(1) NOT NULL, " +
-				"isla TINYINT(1) NOT NULL, " +
-				"costa TINYINT(1) NOT NULL, " +
+				"nombre VARCHAR(45) NOT NULL, " + 	
+				//"posX INT NOT NULL, " + 
+				//"posY INT NOT NULL, " +
+				//"angulo INT NOT NULL, " +
+				//"barco TINYINT(1) NOT NULL, " +
+				//"lancha TINYINT(1) NOT NULL, " +
+				//"isla TINYINT(1) NOT NULL, " +
+				//"costa TINYINT(1) NOT NULL, " +
 				"UNIQUE KEY (id_figura)" +
 				") ENGINE=InnoDB DEFAULT CHARSET=utf8;";	
 			pstmt = con.prepareStatement(createTableFigura);	
@@ -90,11 +91,13 @@ public class CrearDB{
 			pstmt = con.prepareStatement(createTableFigurasPartidas);	
 			cant = pstmt.executeUpdate();
 			pstmt.close();
-			System.out.println("********** TABLA Figuras Partidas ok **********");
-		
-			
-			
+			System.out.println("********** TABLA Figuras Partidas ok **********");			
 			System.out.println("********** TABLAS CREADAS **********");
+			
+			System.out.println("********** INSERTAR FIGURAS **********");
+			CargarDB cargarDB = new CargarDB(con);
+			cargarDB.cargarFiguras();			
+			System.out.println("********** INSERTAR FIGURAS ok**********");
 			con.close();
 			System.out.println("********** DESCONECTADO MYSQL **********");
 		}
