@@ -83,7 +83,7 @@ public class CrearDB{
 					"id_figura INT NOT NULL, " +
 					"posicion_x FLOAT NOT NULL, " +
 					"posicion_y FLOAT NOT NULL, " +
-					"angulo FLOAT NOT NULL, " +
+					"angulo INT NOT NULL, " +
 					"impactos_permitidos INT NOT NULL, " +
 					"mangueras TINYINT(1) NOT NULL, " +
 					"FOREIGN KEY (id_partida) REFERENCES partidas(id_partida) ON DELETE CASCADE, " +
