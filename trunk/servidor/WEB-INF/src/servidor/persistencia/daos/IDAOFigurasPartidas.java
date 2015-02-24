@@ -14,9 +14,9 @@ public interface IDAOFigurasPartidas {
 
 	public List<VOFigurasPartidas> listarFigurasPartidas(IConexion iConn) throws ListarFigurasPartidasException;
 	
-	public void insert(IConexion iConn, Figura figura, int idPartida)throws GuardarFigurasPartidasException;
-	
-	public boolean member(IConexion iConn);
+//	public void insert(IConexion iConn, Figura figura, int idPartida)throws GuardarFigurasPartidasException;
+//	
+//	public boolean member(IConexion iConn);
 	
 	public List<VOFigurasPartidas> listarFigurasPartidasIdPartida(IConexion iConn, int idPartida) throws FigurasPartidasIdPartidaException;
 

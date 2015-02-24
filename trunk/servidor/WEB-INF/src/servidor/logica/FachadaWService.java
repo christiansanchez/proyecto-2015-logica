@@ -2,11 +2,15 @@ package servidor.logica;
 
 import java.util.List;
 
+import servidor.excepciones.ActualizarEstadoPartidaException;
+import servidor.excepciones.BuscarPartidasException;
 import servidor.excepciones.FachadaException;
+import servidor.excepciones.FigurasPartidasIdPartidaException;
 import servidor.excepciones.ListarPartidasCreadasException;
 import servidor.excepciones.MonitorException;
 import servidor.excepciones.PersistenciaException;
 import servidor.persistencia.poolConexiones.IConexion;
+import servidor.valueObjects.VOFigurasPartidas;
 import servidor.valueObjects.VOPartida;
 /*
  * Clase encargada de definir la logica y los metodos utilizados
@@ -127,8 +131,64 @@ public class FachadaWService extends Fachada{
 		return resultado;
 	}
 	
-	public boolean setCargarPartida(String nombrePartida, String rolPartida){
-		return false;
+	public String setCargarPartida(String nombrePartida, String rolPartida) throws FachadaException{
+		nombrePartida = nombrePartida.trim();
+		String resultado = "";
+		Fachada instanciaWS = Fachada.getInstancia();
+		IConexion iConn = null;
+		try{
+			instanciaWS.monitorJuego.comenzarEscritura();
+			if(instanciaWS.partidas.member(nombrePartida)) {
+				Partida partidaCreada = instanciaWS.partidas.find(nombrePartida);
+				if (partidaCreada.getEstadoPartida() == EstadoPartida.ENCURSO){
+					iConn = instanciaWS.ipool.obtenerConexion(false);
+					VOPartida voPartida = instanciaWS.iPartidas.find(iConn, nombrePartida);					
+					List<VOFigurasPartidas> figurasPartidas = instanciaWS.iFigurasPartidas.listarFigurasPartidasIdPartida(iConn, voPartida.getIdPartida());
+					//TODO: FAlta obtener las figuras de la base de datos para saber id - nombre.
+					//se podria hacer cuando se cargue la fachada y dejarla.
+					String partidaStr = "";
+					for (VOFigurasPartidas VOFigurasPartidas : figurasPartidas) {
+						//TODO: Falta armar el string para devolverselo a la presentacion
+//						
+//						partidaStr += "nombrePartida:\"" + voPartida.getNombre() + "\"," + 
+//								  	  "tipoRolDisponible:\"\"," +
+//								      "tipoMapa:\"" + voPartida.getTipoMapaStr() + "\";";				 
+					}
+					resultado += partidaStr;
+					if (!resultado.isEmpty()){
+						resultado = resultado.substring(0, resultado.length()-1);
+					}
+					instanciaWS.iPartidas.updatePartidaCredaToEnCurso(iConn, nombrePartida, voPartida.getIdPartida());
+				}
+			}			
+		}
+		catch(MonitorException | PersistenciaException | FigurasPartidasIdPartidaException |
+			BuscarPartidasException | ActualizarEstadoPartidaException e){
+			resultado = "";
+			try {                             
+				instanciaWS.ipool.liberarConexion(iConn, false);
+                iConn = null;
+                instanciaWS.monitorJuego.terminarEscritura();                 	                  
+	        }
+	        catch(PersistenciaException e1) {
+	        	instanciaWS.monitorJuego.terminarEscritura();    
+	        	resultado = "";
+	        }
+		}
+		finally{
+			instanciaWS.monitorJuego.terminarEscritura();
+			try {
+                if(iConn != null) {                
+                	instanciaWS.ipool.liberarConexion(iConn, true);
+                	instanciaWS.monitorJuego.terminarEscritura();
+                } 	                   
+            }
+            catch(PersistenciaException e) {
+            	instanciaWS.monitorJuego.terminarEscritura();    
+            	resultado = "";
+            } 	
+		}
+		return resultado;
 	}
 	
 	public boolean setUnirsePartida(String nombrePartida, String rolPartida) throws FachadaException{
@@ -162,7 +222,6 @@ public class FachadaWService extends Fachada{
 					}
 					EstadoPartida estadoPartida = EstadoPartida.ENCURSO;
 					partidaCreada.setEstadoPartida(estadoPartida);
-//					instanciaWS.partidas.insert(partidaNueva);
 					resultado = true;
 				}
 			}			

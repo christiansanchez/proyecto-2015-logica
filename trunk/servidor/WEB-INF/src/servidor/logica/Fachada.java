@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import servidor.excepciones.FachadaException;
 import servidor.logica.monitor.MonitorLecturaEscritura;
+import servidor.persistencia.daos.IDAOFigurasPartidas;
 import servidor.persistencia.daos.IDAOPartidas;
 import servidor.persistencia.fabricas.FabricaAbstracta;
 import servidor.persistencia.poolConexiones.IPoolConexiones;
@@ -21,6 +22,7 @@ public class Fachada {
 	protected IPoolConexiones ipool;
 	protected MonitorLecturaEscritura monitorJuego;
 	protected IDAOPartidas iPartidas;
+	protected IDAOFigurasPartidas iFigurasPartidas;
 	
 	public static Fachada getInstancia() throws FachadaException{
 		if(instancia == null) {
@@ -42,6 +44,7 @@ public class Fachada {
 			String fabrica =  prop.getProperty("nameClassFactory");
 			FabricaAbstracta iFabrica = ((FabricaAbstracta)Class.forName(fabrica).newInstance());
 			this.iPartidas = iFabrica.crearDAOPartidas();
+			this.iFigurasPartidas = iFabrica.crearDAOFigurasPartidas();
 
 		} catch (IOException | InstantiationException | IllegalAccessException
 				| ClassNotFoundException e ) {
