@@ -22,12 +22,14 @@ public class FachadaWService extends Fachada{
 		Fachada.getInstancia();
 	}
 	
-	public boolean hasPartida(String nombrePartida) throws FachadaException{		
+	public boolean hasPartida(String nombrePartida) throws FachadaException{
+		nombrePartida = nombrePartida.trim();
 		return (Fachada.getInstancia()).partidas.member(nombrePartida);
 	}
 	
 	public boolean setPartida(String nombrePartida, String rolPartida, String tipoMapa) throws FachadaException{
 		boolean resultado = false;
+		nombrePartida = nombrePartida.trim();
 		Fachada instanciaWS = Fachada.getInstancia();
 		try{			
 			instanciaWS.monitorJuego.comenzarEscritura();
@@ -138,29 +140,62 @@ public class FachadaWService extends Fachada{
 		IConexion iConn = null;
 		try{
 			instanciaWS.monitorJuego.comenzarEscritura();
-			if(instanciaWS.partidas.member(nombrePartida)) {
-				Partida partidaCreada = instanciaWS.partidas.find(nombrePartida);
-				if (partidaCreada.getEstadoPartida() == EstadoPartida.ENCURSO){
-					iConn = instanciaWS.ipool.obtenerConexion(false);
-					VOPartida voPartida = instanciaWS.iPartidas.find(iConn, nombrePartida);					
-					List<VOFigurasPartidas> figurasPartidas = instanciaWS.iFigurasPartidas.listarFigurasPartidasIdPartida(iConn, voPartida.getIdPartida());
-					//TODO: FAlta obtener las figuras de la base de datos para saber id - nombre.
-					//se podria hacer cuando se cargue la fachada y dejarla.
-					String partidaStr = "";
-					for (VOFigurasPartidas VOFigurasPartidas : figurasPartidas) {
-						//TODO: Falta armar el string para devolverselo a la presentacion
-//						
-//						partidaStr += "nombrePartida:\"" + voPartida.getNombre() + "\"," + 
-//								  	  "tipoRolDisponible:\"\"," +
-//								      "tipoMapa:\"" + voPartida.getTipoMapaStr() + "\";";				 
-					}
-					resultado += partidaStr;
-					if (!resultado.isEmpty()){
-						resultado = resultado.substring(0, resultado.length()-1);
-					}
-					instanciaWS.iPartidas.updatePartidaCredaToEnCurso(iConn, nombrePartida, voPartida.getIdPartida());
+			if(!instanciaWS.partidas.member(nombrePartida)) {
+				iConn = instanciaWS.ipool.obtenerConexion(false);					
+				VOPartida voPartida = instanciaWS.iPartidas.find(iConn, nombrePartida);			
+				List<VOFigurasPartidas> figurasPartidas = instanciaWS.iFigurasPartidas.listarFigurasPartidasIdPartida(iConn, voPartida.getIdPartida());					
+				String figurasPartidasStr = "";	
+				Partida partidaNueva = null;
+				Jugador jugador1 = null;
+				Jugador jugador2 = null;				
+				for (VOFigurasPartidas voFigurasPartidas : figurasPartidas){					
+					switch(voFigurasPartidas.getId_figura()) {
+					 case 1://MANGUERA1 
+						 figurasPartidasStr += "manguera1:" + voFigurasPartidas.getMangueras() + ";";
+					     break;
+					 case 2://MANGUERA2
+						 figurasPartidasStr += "manguera2:" + voFigurasPartidas.getMangueras() + ";";
+					     break;
+					 case 3://MANGUERA3 
+						 figurasPartidasStr += "manguera3:" + voFigurasPartidas.getMangueras() + ";";
+					     break;
+					 case 4://MANGUERA$
+						 figurasPartidasStr += "manguera4:" + voFigurasPartidas.getMangueras() + ";";
+					     break;
+					 case 5://MANGUERA5
+						 figurasPartidasStr += "manguera5:" + voFigurasPartidas.getMangueras() + ";";
+					     break;
+					 case 6://MANGUERA6
+						 figurasPartidasStr += "manguera6:" + voFigurasPartidas.getMangueras() + ";";
+						 break;
+					 case 7://MANGUERA7
+						 figurasPartidasStr += "manguera7:" + voFigurasPartidas.getMangueras() + ";";
+						 break;
+					 case 8://MANGUERA8
+						 figurasPartidasStr += "manguera8:" + voFigurasPartidas.getMangueras() + ";";
+						 break;
+					 case 9://BARCO
+						 figurasPartidasStr += "posicionXBarco:" + voFigurasPartidas.getPosicionX() + "," + "posicionYBarco:" + voFigurasPartidas.getPosicionY() + ";";
+						 break;
+					 case 10://LANCHA1
+						 figurasPartidasStr += "posicionXLancha1:" + voFigurasPartidas.getPosicionX() + "," + "posicionYLancha1:" + voFigurasPartidas.getPosicionY() +  "energiaLancha1:" +  voFigurasPartidas.getImpactosPermitidos() + ";";
+						 break;
+					 case 11://LANCHA2
+						 figurasPartidasStr += "posicionXLancha2:" + voFigurasPartidas.getPosicionX() + "," + "posicionYLancha2:" + voFigurasPartidas.getPosicionY() +  "energiaLancha2:" +  voFigurasPartidas.getImpactosPermitidos() + ";";
+						 break;
+					 case 12://LANCHA3
+						 figurasPartidasStr += "posicionXLancha3:" + voFigurasPartidas.getPosicionX() + "," + "posicionYLancha2:" + voFigurasPartidas.getPosicionY() +  "energiaLancha3:" +  voFigurasPartidas.getImpactosPermitidos() + ";";
+						 break;
+					}		 
 				}
-			}			
+				resultado += figurasPartidasStr;
+				if (!resultado.isEmpty()){
+					resultado = resultado.substring(0, resultado.length()-1);
+				}
+				partidaNueva = new Partida(nombrePartida, jugador1, jugador2, voPartida.getMapa());
+				instanciaWS.partidas.insert(partidaNueva);
+				instanciaWS.iPartidas.updatePartidaCredaToEnCurso(iConn, nombrePartida, voPartida.getIdPartida());		
+			}
 		}
 		catch(MonitorException | PersistenciaException | FigurasPartidasIdPartidaException |
 			BuscarPartidasException | ActualizarEstadoPartidaException e){
@@ -192,6 +227,7 @@ public class FachadaWService extends Fachada{
 	}
 	
 	public boolean setUnirsePartida(String nombrePartida, String rolPartida) throws FachadaException{
+		nombrePartida = nombrePartida.trim();
 		boolean resultado = false;
 		Fachada instanciaWS = Fachada.getInstancia();
 		try{
