@@ -11,5 +11,4 @@
 	<operation name="getUnirsePartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
 	<operation name="getCargarPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
 	<operation name="setCargarPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
-	<operation name="setUnirsePartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
 </service>

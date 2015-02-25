@@ -8,10 +8,20 @@ public abstract class Figura {
 	
 	private float posicionX;
 	private float posicionY;
+	private int angulo;
 	
 	public Figura(float posicionX, float posicionY){
 		this.posicionX = posicionX;
 		this.posicionY = posicionY;
+		this.angulo = 0;
+	}
+	
+	public int getAngulo(){
+		return this.angulo;
+	}
+	
+	public void setAngulo(int angulo){
+		this.angulo = angulo;
 	}
 	
 	public void setPosicionX(float posicionX){

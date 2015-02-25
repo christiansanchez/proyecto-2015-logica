@@ -93,10 +93,9 @@ public class DAOPartidas implements IDAOPartidas{
 		try {			
 			String query = this.consultas.updatePartidaCreadaToEncurso();
 			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);
-			pstmt.setString(1, nombrePartida);
-			pstmt.setInt(2, idPartida);
-			ResultSet rs = pstmt.executeQuery();			
-			rs.close();
+			pstmt.setString(2, nombrePartida);
+			pstmt.setInt(1, idPartida);
+			pstmt.executeUpdate();			
 			pstmt.close();				
 		}	
 		catch(SQLException e){

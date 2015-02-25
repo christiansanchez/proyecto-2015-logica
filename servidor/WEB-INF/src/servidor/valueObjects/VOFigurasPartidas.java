@@ -11,9 +11,10 @@ public class VOFigurasPartidas {
 	private float posicionY;
 	private int impactosPermitidos;
 	private boolean mangueras;
-	
+	private int angulo;
+
 	public VOFigurasPartidas(int id, int id_partida, int id_figura, float posicionX,
-							 float posicionY, int impactosPermitidos, boolean mangueras){
+							 float posicionY, int impactosPermitidos, boolean mangueras, int angulo){
 		this.id = id;
 		this.id_partida = id_partida;
 		this.id_figura = id_figura;
@@ -21,6 +22,15 @@ public class VOFigurasPartidas {
 		this.posicionY = posicionY;
 		this.impactosPermitidos = impactosPermitidos;
 		this.mangueras = mangueras;
+		this.angulo = angulo;
+	}
+	
+	public int getAngulo(){
+		return this.angulo;
+	}
+	
+	public void setAngulo(int angulo){
+		this.angulo = angulo;
 	}
 	
 	public int getId_partida() {

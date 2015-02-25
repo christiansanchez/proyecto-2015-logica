@@ -77,6 +77,7 @@ public class FachadaWService extends Fachada{
 			Fachada instanciaWS = Fachada.getInstancia();
 			instanciaWS.monitorJuego.comenzarLectura();
 			resultado = instanciaWS.partidas.getPartidasDisponibles();
+			resultado = resultado.replace(" ", "%20");
 		}
 		catch(MonitorException  e){
 			resultado = "";
@@ -98,14 +99,14 @@ public class FachadaWService extends Fachada{
 			List<VOPartida> partidasCreadas = instanciaWS.iPartidas.listarPartidasCreadas(iConn);
 			String partidaStr = "";
 			for (VOPartida voPartida : partidasCreadas) {
-				partidaStr += "nombrePartida:\"" + voPartida.getNombre() + "\"," + 
-						  	  "tipoRolDisponible:\"\"," +
-						      "tipoMapa:\"" + voPartida.getTipoMapaStr() + "\";";				 
+				partidaStr += "\"nombrePartida\":\"" + voPartida.getNombre() + "\"," +						  
+						      "\"tipoMapa\":\"" + voPartida.getTipoMapaStr() + "\";";				 
 			}
 			resultado += partidaStr;
 			if (!resultado.isEmpty()){
 				resultado = resultado.substring(0, resultado.length()-1);
-			}	
+			}
+			resultado = resultado.replace(" ", "%20");
 		}
 		catch(MonitorException | PersistenciaException | ListarPartidasCreadasException e){
 			resultado = "";
@@ -146,45 +147,75 @@ public class FachadaWService extends Fachada{
 				List<VOFigurasPartidas> figurasPartidas = instanciaWS.iFigurasPartidas.listarFigurasPartidasIdPartida(iConn, voPartida.getIdPartida());					
 				String figurasPartidasStr = "";	
 				Partida partidaNueva = null;
-				Jugador jugador1 = null;
-				Jugador jugador2 = null;				
+				Barco barco = new Barco();
+				BarcoCarguero barcoCarguero = new BarcoCarguero(barco);				
+				Pirata pirata = new Pirata();
 				for (VOFigurasPartidas voFigurasPartidas : figurasPartidas){					
 					switch(voFigurasPartidas.getId_figura()) {
 					 case 1://MANGUERA1 
-						 figurasPartidasStr += "manguera1:" + voFigurasPartidas.getMangueras() + ";";
+						 figurasPartidasStr += "\"manguera1\":" + voFigurasPartidas.getMangueras() + ";";
+						 (barcoCarguero.getBarco()).setMangueras(1, voFigurasPartidas.getMangueras());
 					     break;
 					 case 2://MANGUERA2
-						 figurasPartidasStr += "manguera2:" + voFigurasPartidas.getMangueras() + ";";
+						 figurasPartidasStr += "\"manguera2\":" + voFigurasPartidas.getMangueras() + ";";
+						 (barcoCarguero.getBarco()).setMangueras(2, voFigurasPartidas.getMangueras());
 					     break;
 					 case 3://MANGUERA3 
-						 figurasPartidasStr += "manguera3:" + voFigurasPartidas.getMangueras() + ";";
+						 figurasPartidasStr += "\"manguera3\":" + voFigurasPartidas.getMangueras() + ";";
+						 (barcoCarguero.getBarco()).setMangueras(3, voFigurasPartidas.getMangueras());
 					     break;
 					 case 4://MANGUERA$
-						 figurasPartidasStr += "manguera4:" + voFigurasPartidas.getMangueras() + ";";
+						 figurasPartidasStr += "\"manguera4\":" + voFigurasPartidas.getMangueras() + ";";
+						 (barcoCarguero.getBarco()).setMangueras(4, voFigurasPartidas.getMangueras());
 					     break;
 					 case 5://MANGUERA5
-						 figurasPartidasStr += "manguera5:" + voFigurasPartidas.getMangueras() + ";";
+						 figurasPartidasStr += "\"manguera5\":" + voFigurasPartidas.getMangueras() + ";";
+						 (barcoCarguero.getBarco()).setMangueras(5, voFigurasPartidas.getMangueras());
 					     break;
 					 case 6://MANGUERA6
-						 figurasPartidasStr += "manguera6:" + voFigurasPartidas.getMangueras() + ";";
+						 figurasPartidasStr += "\"manguera6\":" + voFigurasPartidas.getMangueras() + ";";
+						 (barcoCarguero.getBarco()).setMangueras(6, voFigurasPartidas.getMangueras());
 						 break;
 					 case 7://MANGUERA7
-						 figurasPartidasStr += "manguera7:" + voFigurasPartidas.getMangueras() + ";";
+						 figurasPartidasStr += "\"manguera7\":" + voFigurasPartidas.getMangueras() + ";";
+						 (barcoCarguero.getBarco()).setMangueras(7, voFigurasPartidas.getMangueras());
 						 break;
 					 case 8://MANGUERA8
-						 figurasPartidasStr += "manguera8:" + voFigurasPartidas.getMangueras() + ";";
+						 figurasPartidasStr += "\"manguera8\":" + voFigurasPartidas.getMangueras() + ";";
+						 (barcoCarguero.getBarco()).setMangueras(8, voFigurasPartidas.getMangueras());
 						 break;
 					 case 9://BARCO
-						 figurasPartidasStr += "posicionXBarco:" + voFigurasPartidas.getPosicionX() + "," + "posicionYBarco:" + voFigurasPartidas.getPosicionY() + ";";
+						 figurasPartidasStr += "\"posicionXBarco\":" + voFigurasPartidas.getPosicionX() + "," + "\"posicionYBarco\":" + voFigurasPartidas.getPosicionY() + ";";
+						 (barcoCarguero.getBarco()).setPosicionX(voFigurasPartidas.getPosicionX());
+						 (barcoCarguero.getBarco()).setPosicionY(voFigurasPartidas.getPosicionY());
+						 (barcoCarguero.getBarco()).setAngulo(voFigurasPartidas.getAngulo());
 						 break;
 					 case 10://LANCHA1
-						 figurasPartidasStr += "posicionXLancha1:" + voFigurasPartidas.getPosicionX() + "," + "posicionYLancha1:" + voFigurasPartidas.getPosicionY() +  "energiaLancha1:" +  voFigurasPartidas.getImpactosPermitidos() + ";";
+						 figurasPartidasStr += "\"posicionXLancha1\":" + voFigurasPartidas.getPosicionX() + "," + "\"posicionYLancha1\":" + voFigurasPartidas.getPosicionY() + "," + "\"energiaLancha1\":" +  voFigurasPartidas.getImpactosPermitidos() + "," + "\"anguloLancha1\":" + voFigurasPartidas.getAngulo() + ";";
+						 Lancha lancha = new Lancha();
+						 lancha.setImpactosPermitidos(voFigurasPartidas.getImpactosPermitidos());
+						 lancha.setPosicionY(voFigurasPartidas.getPosicionY());
+						 lancha.setPosicionX(voFigurasPartidas.getPosicionX());
+						 lancha.setAngulo(voFigurasPartidas.getAngulo());
+						 pirata.setLancha(1, lancha);
 						 break;
 					 case 11://LANCHA2
-						 figurasPartidasStr += "posicionXLancha2:" + voFigurasPartidas.getPosicionX() + "," + "posicionYLancha2:" + voFigurasPartidas.getPosicionY() +  "energiaLancha2:" +  voFigurasPartidas.getImpactosPermitidos() + ";";
+						 figurasPartidasStr += "\"posicionXLancha2\":" + voFigurasPartidas.getPosicionX() + "," + "\"posicionYLancha2\":" + voFigurasPartidas.getPosicionY() + "," +  "\"energiaLancha2\":" +  voFigurasPartidas.getImpactosPermitidos() + "," + "\"anguloLancha2\":" + voFigurasPartidas.getAngulo() + ";";
+						 Lancha lancha2 = new Lancha();
+						 lancha2.setImpactosPermitidos(voFigurasPartidas.getImpactosPermitidos());
+						 lancha2.setPosicionY(voFigurasPartidas.getPosicionY());
+						 lancha2.setPosicionX(voFigurasPartidas.getPosicionX());
+						 lancha2.setAngulo(voFigurasPartidas.getAngulo());
+						 pirata.setLancha(2, lancha2);						 
 						 break;
 					 case 12://LANCHA3
-						 figurasPartidasStr += "posicionXLancha3:" + voFigurasPartidas.getPosicionX() + "," + "posicionYLancha2:" + voFigurasPartidas.getPosicionY() +  "energiaLancha3:" +  voFigurasPartidas.getImpactosPermitidos() + ";";
+						 figurasPartidasStr += "\"posicionXLancha3\":" + voFigurasPartidas.getPosicionX() + "," + "\"posicionYLancha2\":" + voFigurasPartidas.getPosicionY() + "," +  "\"energiaLancha3\":" +  voFigurasPartidas.getImpactosPermitidos() + "," + "\"anguloLancha3\":" + voFigurasPartidas.getAngulo() + ";";
+						 Lancha lancha3 = new Lancha();
+						 lancha3.setImpactosPermitidos(voFigurasPartidas.getImpactosPermitidos());
+						 lancha3.setPosicionY(voFigurasPartidas.getPosicionY());
+						 lancha3.setPosicionX(voFigurasPartidas.getPosicionX());
+						 lancha3.setAngulo(voFigurasPartidas.getAngulo());
+						 pirata.setLancha(3, lancha3);
 						 break;
 					}		 
 				}
@@ -192,9 +223,14 @@ public class FachadaWService extends Fachada{
 				if (!resultado.isEmpty()){
 					resultado = resultado.substring(0, resultado.length()-1);
 				}
+				Jugador jugador1 = new Jugador(barcoCarguero);
+				Jugador jugador2 = new Jugador(pirata);	
 				partidaNueva = new Partida(nombrePartida, jugador1, jugador2, voPartida.getMapa());
+				EstadoPartida estado = EstadoPartida.ENCURSO;				
+				partidaNueva.setEstadoPartida(estado);
 				instanciaWS.partidas.insert(partidaNueva);
-				instanciaWS.iPartidas.updatePartidaCredaToEnCurso(iConn, nombrePartida, voPartida.getIdPartida());		
+				instanciaWS.iPartidas.updatePartidaCredaToEnCurso(iConn, nombrePartida, voPartida.getIdPartida());
+				resultado.replace(" ", "%20");
 			}
 		}
 		catch(MonitorException | PersistenciaException | FigurasPartidasIdPartidaException |
@@ -224,50 +260,5 @@ public class FachadaWService extends Fachada{
             } 	
 		}
 		return resultado;
-	}
-	
-	public boolean setUnirsePartida(String nombrePartida, String rolPartida) throws FachadaException{
-		nombrePartida = nombrePartida.trim();
-		boolean resultado = false;
-		Fachada instanciaWS = Fachada.getInstancia();
-		try{
-			instanciaWS.monitorJuego.comenzarEscritura();
-			if(instanciaWS.partidas.member(nombrePartida)) {
-				Partida partidaCreada = instanciaWS.partidas.find(nombrePartida);
-				if (partidaCreada.getEstadoPartida() == EstadoPartida.CREADA){
-					Jugador jugador2 = null;
-					Jugador jugadorPartida = null;
-					if(rolPartida.equals("BARCOCARGUERO")){											
-						jugadorPartida = partidaCreada.getBarcoCarguero();
-						if(jugadorPartida == null){
-							Barco barco = new Barco();
-							barco.barcoNuevo();
-							BarcoCarguero barcoCarguero = new BarcoCarguero(barco);
-							jugador2 = new Jugador(barcoCarguero);
-							partidaCreada.setBarcoCarguero(jugador2);
-						}
-					}
-					else{						
-						jugadorPartida = partidaCreada.getLanchaPirata();
-						if(jugadorPartida == null){
-							Pirata pirata = new Pirata();
-							pirata.pirataNuevo();
-							jugador2 = new Jugador(pirata);
-							partidaCreada.setLanchaPirata(jugador2);							
-						}
-					}
-					EstadoPartida estadoPartida = EstadoPartida.ENCURSO;
-					partidaCreada.setEstadoPartida(estadoPartida);
-					resultado = true;
-				}
-			}			
-		}
-		catch(MonitorException e){
-			resultado = false;
-		}
-		finally{
-			instanciaWS.monitorJuego.terminarEscritura();
-		}
-		return resultado;
-	}
+	}	
 }

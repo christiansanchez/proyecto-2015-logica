@@ -94,8 +94,9 @@ public class DAOFigurasPartidas implements IDAOFigurasPartidas{
 				float posicionY = rs.getFloat("posicion_y");
 				int impactosPermitidos = rs.getInt("impactos_permitidos");
 				boolean mangueras = rs.getBoolean("mangueras");
+				int angulo = rs.getInt("angulo");
 				VOFigurasPartidas voFiguraPartida = new VOFigurasPartidas(id, idPartida, idFigura, posicionX, 
-						   												  posicionY, impactosPermitidos, mangueras);
+						   												  posicionY, impactosPermitidos, mangueras, angulo);
 				list.add(voFiguraPartida);
 			}
 			rs.close();
