@@ -17,12 +17,13 @@ import servidor.persistencia.poolConexiones.IPoolConexiones;
  */
 public class Fachada {
 	/*Atributos*/	
-	protected static Fachada instancia = null;
+	private static Fachada instancia;
 	protected Partidas partidas;
 	protected IPoolConexiones ipool;
 	protected MonitorLecturaEscritura monitorJuego;
 	protected IDAOPartidas iPartidas;
 	protected IDAOFigurasPartidas iFigurasPartidas;
+	
 	
 	public static Fachada getInstancia() throws FachadaException{
 		if(instancia == null) {
@@ -31,7 +32,7 @@ public class Fachada {
 		return instancia;
 	}
 	
-	protected Fachada() throws FachadaException{
+	private Fachada() throws FachadaException{
 		this.monitorJuego = MonitorLecturaEscritura.getInstancia();	
 		this.partidas = new Partidas();
 		Properties prop = new Properties();	
@@ -51,5 +52,4 @@ public class Fachada {
 			throw new FachadaException();			
 		}			
 	}
-
 }
