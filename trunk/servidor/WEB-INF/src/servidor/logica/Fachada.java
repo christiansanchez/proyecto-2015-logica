@@ -16,15 +16,15 @@ import servidor.persistencia.poolConexiones.IPoolConexiones;
  * utilizadas por las clases que la heredan. 
  */
 public class Fachada {
+	
 	/*Atributos*/	
-	private static Fachada instancia;
+	private static Fachada instancia = null;
 	protected Partidas partidas;
 	protected IPoolConexiones ipool;
 	protected MonitorLecturaEscritura monitorJuego;
 	protected IDAOPartidas iPartidas;
 	protected IDAOFigurasPartidas iFigurasPartidas;
-	
-	
+		
 	public static Fachada getInstancia() throws FachadaException{
 		if(instancia == null) {
 			instancia = new Fachada();
@@ -52,4 +52,5 @@ public class Fachada {
 			throw new FachadaException();			
 		}			
 	}
+	
 }
