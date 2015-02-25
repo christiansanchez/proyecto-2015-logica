@@ -24,4 +24,7 @@ public class Lancha extends Figura{
 		this.impactosPermitidos = this.impactosPermitidos - 1;
 	}
 	
+	public void destruirLancha(){
+		this.impactosPermitidos = 0;
+	}
 }

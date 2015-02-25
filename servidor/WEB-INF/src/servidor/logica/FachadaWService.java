@@ -18,12 +18,6 @@ import servidor.valueObjects.VOPartida;
  */
 public class FachadaWService{
 	
-//	private static Fachada instancia; 
-//	
-//	public FachadaWService() throws FachadaException {
-//		instancia = Fachada.getInstancia();		
-//	}
-	
 	public boolean hasPartida(String nombrePartida) throws FachadaException{
 		nombrePartida = nombrePartida.trim();
 		return (Fachada.getInstancia()).partidas.member(nombrePartida);
@@ -187,7 +181,7 @@ public class FachadaWService{
 						 (barcoCarguero.getBarco()).setMangueras(8, voFigurasPartidas.getMangueras());
 						 break;
 					 case 9://BARCO
-						 figurasPartidasStr += "\"posicionXBarco\":" + voFigurasPartidas.getPosicionX() + "," + "\"posicionYBarco\":" + voFigurasPartidas.getPosicionY() + ";";
+						 figurasPartidasStr += "\"posicionXBarco\":" + voFigurasPartidas.getPosicionX() + "," + "\"posicionYBarco\":" + voFigurasPartidas.getPosicionY() + "," + "\"anguloBarco\":" + voFigurasPartidas.getAngulo() + ";";
 						 (barcoCarguero.getBarco()).setPosicionX(voFigurasPartidas.getPosicionX());
 						 (barcoCarguero.getBarco()).setPosicionY(voFigurasPartidas.getPosicionY());
 						 (barcoCarguero.getBarco()).setAngulo(voFigurasPartidas.getAngulo());
@@ -211,7 +205,7 @@ public class FachadaWService{
 						 pirata.setLancha(2, lancha2);						 
 						 break;
 					 case 12://LANCHA3
-						 figurasPartidasStr += "\"posicionXLancha3\":" + voFigurasPartidas.getPosicionX() + "," + "\"posicionYLancha2\":" + voFigurasPartidas.getPosicionY() + "," +  "\"energiaLancha3\":" +  voFigurasPartidas.getImpactosPermitidos() + "," + "\"anguloLancha3\":" + voFigurasPartidas.getAngulo() + ";";
+						 figurasPartidasStr += "\"posicionXLancha3\":" + voFigurasPartidas.getPosicionX() + "," + "\"posicionYLancha3\":" + voFigurasPartidas.getPosicionY() + "," +  "\"energiaLancha3\":" +  voFigurasPartidas.getImpactosPermitidos() + "," + "\"anguloLancha3\":" + voFigurasPartidas.getAngulo() + ";";
 						 Lancha lancha3 = new Lancha();
 						 lancha3.setImpactosPermitidos(voFigurasPartidas.getImpactosPermitidos());
 						 lancha3.setPosicionY(voFigurasPartidas.getPosicionY());

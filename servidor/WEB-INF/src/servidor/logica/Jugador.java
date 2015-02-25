@@ -7,4 +7,8 @@ public class Jugador {
 	public Jugador(Rol rolJugador){
 		this.rol = rolJugador;
 	}
+	
+	public Rol getRol(){
+		return this.rol;
+	}
 }

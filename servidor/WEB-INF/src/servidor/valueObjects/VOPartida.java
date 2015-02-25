@@ -67,6 +67,20 @@ public class VOPartida implements Serializable{
 		return estadoStr;
 	}
 	
+	public String getEstadoStrDB(){
+		String estadoStr = "";		
+		if(this.estado == EstadoPartida.CREADA){
+			estadoStr = "Creada";
+		}
+		else if(this.estado == EstadoPartida.ENCURSO){
+			estadoStr = "EnCurso";
+		}
+		else if(this.estado == EstadoPartida.TERMINADA){
+			estadoStr = "Terminada";
+		}
+		return estadoStr;
+	}
+	
 	public String getTipoMapaStr(){
 		String tipoMapaStr = "";
 		if (this.mapa.getTipoMapa() == TipoMapa.MARABIERTO){;
@@ -74,6 +88,17 @@ public class VOPartida implements Serializable{
 		}
 		else{
 			tipoMapaStr = "ISLAS";
+		}
+		return tipoMapaStr;
+	}
+	
+	public String getTipoMapaStrDB(){
+		String tipoMapaStr = "";
+		if (this.mapa.getTipoMapa() == TipoMapa.MARABIERTO){;
+			tipoMapaStr = "MarAbierto";
+		}
+		else{
+			tipoMapaStr = "Islas";
 		}
 		return tipoMapaStr;
 	}
