@@ -16,11 +16,13 @@ import servidor.valueObjects.VOPartida;
  * Clase encargada de definir la logica y los metodos utilizados
  * desde el web service.
  */
-public class FachadaWService extends Fachada{
+public class FachadaWService{
 	
-	public FachadaWService() throws FachadaException {
-		Fachada.getInstancia();
-	}
+//	private static Fachada instancia; 
+//	
+//	public FachadaWService() throws FachadaException {
+//		instancia = Fachada.getInstancia();		
+//	}
 	
 	public boolean hasPartida(String nombrePartida) throws FachadaException{
 		nombrePartida = nombrePartida.trim();
