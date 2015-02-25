@@ -2,8 +2,6 @@ package servidor.valueObjects;
 
 public class VOFigurasPartidas {
 
-	private static final long serialVersionUID = 5335437815205567414L;
-	
 	private int id;
 	private int id_partida;
 	private int id_figura;
@@ -13,6 +11,8 @@ public class VOFigurasPartidas {
 	private boolean mangueras;
 	private int angulo;
 
+	public VOFigurasPartidas(){}
+	
 	public VOFigurasPartidas(int id, int id_partida, int id_figura, float posicionX,
 							 float posicionY, int impactosPermitidos, boolean mangueras, int angulo){
 		this.id = id;
@@ -23,6 +23,10 @@ public class VOFigurasPartidas {
 		this.impactosPermitidos = impactosPermitidos;
 		this.mangueras = mangueras;
 		this.angulo = angulo;
+	}
+	
+	public int getId(){
+		return this.id;
 	}
 	
 	public int getAngulo(){

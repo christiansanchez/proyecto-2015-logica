@@ -3,7 +3,8 @@ package servidor.valueObjects;
 
 import java.io.Serializable;
 
-import servidor.logica.*;
+import servidor.logica.EstadoPartida;
+import servidor.logica.Mapa;
 
 public class VOPartidas implements Serializable{
 
@@ -13,10 +14,6 @@ public class VOPartidas implements Serializable{
 		private Mapa mapa;
 		private EstadoPartida estado;
 		
-		public VOPartidas() {
-			// TODO Auto-generated constructor stub
-		}
-
 		public EstadoPartida getEstado() {
 			return estado;
 		}
@@ -37,8 +34,6 @@ public class VOPartidas implements Serializable{
 		public void setNombre(String nombre) {
 			this.nombre = nombre;
 		}
-
-		private EstadoPartida estadoPartida;
 		
 		public int getIdPartida() {
 			return idPartida;

@@ -2,7 +2,6 @@ package servidor.valueObjects;
 
 public class VOFigura {
 
-	private static final long serialVersionUID = 3696776826161294598L;
 	int idFigura;
 	int posX;
 	int posY;

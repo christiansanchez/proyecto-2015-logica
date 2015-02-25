@@ -36,4 +36,9 @@ public class Pirata extends Rol{
 		Lancha lancha = this.getLancha(posicion); 
 		lancha.impactoLancha();
 	}
+	
+	public void destruirLancha(int posicion){
+		Lancha lancha = this.getLancha(posicion); 
+		lancha.destruirLancha();
+	}	
 }

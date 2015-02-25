@@ -6,14 +6,12 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-import servidor.logica.*;
+import servidor.excepciones.AgregarFigurasPartidasException;
 import servidor.excepciones.FigurasPartidasIdPartidaException;
-import servidor.excepciones.GuardarFigurasPartidasException;
-import servidor.excepciones.ListarFigurasPartidasException;
-import servidor.valueObjects.*;
 import servidor.persistencia.consultas.ConsultaFigurasPartidas;
 import servidor.persistencia.poolConexiones.Conexion;
 import servidor.persistencia.poolConexiones.IConexion;
+import servidor.valueObjects.VOFigurasPartidas;
 
 public class DAOFigurasPartidas implements IDAOFigurasPartidas{
 	
@@ -22,58 +20,6 @@ public class DAOFigurasPartidas implements IDAOFigurasPartidas{
 	public DAOFigurasPartidas(){		
 		this.consultas = new ConsultaFigurasPartidas();			
 	}
-	
-	public List<VOFigurasPartidas> listarFigurasPartidas(IConexion iConn) throws ListarFigurasPartidasException 
-	{
-		try {
-			String query = this.consultas.allFigurasPartidas();
-			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);
-			ResultSet rs = pstmt.executeQuery();
-			List<VOFigurasPartidas> list = new LinkedList<VOFigurasPartidas>();			
-			while(rs.next()){
-				int id = rs.getInt("id");
-				int idPartida = rs.getInt("id_partida");
-				int idFigura = rs.getInt("id_figura");
-				int posicionX = rs.getInt("posicion_x");
-				int posicionY = rs.getInt("posicion_y");
-				int impactosPermitidos = rs.getInt("impactosPermitidos");
-				int mangueras = rs.getInt("mangueras");
-//				VOFigurasPartidas voFigPartidas = new VOFigurasPartidas(id, idPartida, idFigura, posicionX, posicionY,
-//																		impactosPermitidos, mangueras);
-//				list.add(voFigPartidas);
-			}
-			rs.close();
-			pstmt.close();
-			return list;
-		}
-		catch(SQLException eSql){
-			throw new ListarFigurasPartidasException();
-		}
-	}	
-	
-//	public void insert(IConexion iConn, Figura fig, int idPartida) throws GuardarFigurasPartidasException {				
-//		try {
-//			String query = this.consultas.insertarFigurasPartidas();
-//			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);
-//			pstmt.setInt(1, idPartida);
-////			pstmt.setInt(2, fig.geidFigura());
-////			pstmt.setInt(3), fig.getPosicionX());
-////			pstmt.setInt(4, fig.getPosicionY());
-//			
-//			int impactosPermitidos = 0;
-//			int mangueras = 0;
-//			if(fig.getClass().equals("Barco")) {
-////				mangueras = (fig.getMangueras();
-//			}
-//			else if(fig.getClass().equals("Lancha")){
-////				impactosPermitidos = (fig.getImpcatosPermitidos();
-//			}
-//					  						
-//		} 
-//		catch (SQLException e) {
-//			throw new GuardarFigurasPartidasException();
-//		}		
-//	}
 	
 	public boolean member(IConexion iConn){
 		return true;
@@ -104,6 +50,27 @@ public class DAOFigurasPartidas implements IDAOFigurasPartidas{
 			return list;
 		} catch (SQLException e) {
 			throw new FigurasPartidasIdPartidaException();
+		}
+	}
+	
+	public void agregarFigurasPartidas(IConexion iConn, List<VOFigurasPartidas> listaFiguras) throws AgregarFigurasPartidasException{
+		try	{
+			String query = this.consultas.insertarFigurasPartidas();
+			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);			
+			for(VOFigurasPartidas voFigPart: listaFiguras){
+				pstmt.setInt(1, voFigPart.getId_partida());
+				pstmt.setInt(2, voFigPart.getId_figura());
+				pstmt.setFloat(3, voFigPart.getPosicionX());
+				pstmt.setFloat(4, voFigPart.getPosicionY());	
+				pstmt.setInt(5, voFigPart.getImpactosPermitidos());	
+				pstmt.setBoolean(6, voFigPart.getMangueras());	
+				pstmt.setInt(7, voFigPart.getAngulo());	
+				pstmt.executeUpdate();
+			}
+			pstmt.close();
+		}
+		catch(SQLException e) {
+			throw new AgregarFigurasPartidasException();
 		}
 	}
 
