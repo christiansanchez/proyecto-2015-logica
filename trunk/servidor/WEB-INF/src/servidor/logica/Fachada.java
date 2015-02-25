@@ -35,7 +35,7 @@ public class Fachada {
 		this.monitorJuego = MonitorLecturaEscritura.getInstancia();	
 		this.partidas = new Partidas();
 		Properties prop = new Properties();	
-		String nombreArchivo = "C:\\Documents and Settings\\christian\\Escritorio\\Proyecto 1\\workspace\\servidor\\configFiles\\config.properties";		
+		String nombreArchivo = "C:\\Documents and Settings\\christian\\Escritorio\\Proyecto 1\\workspace\\servidor\\configFiles\\config.properties";	
 		try {
 			prop.load(new FileInputStream(nombreArchivo));
 			String pool =  prop.getProperty("nameClassPool");
