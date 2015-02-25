@@ -34,7 +34,7 @@ public class FachaWSocket extends Fachada{
 	    synchronized(clients){
 	    	String[] parts = message.split(";");
 	    	String[] parts2 = parts[0].split(":");
-	    	if(parts2[0].equals("unirse")){
+	    	if(parts2[1].equals("unirse")){
 	    		String nombrePartida = null;
     			String rolPartida = null;
 	    		String[] parts3 = parts[1].split(",");	    		
