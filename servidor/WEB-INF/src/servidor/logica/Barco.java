@@ -27,15 +27,15 @@ public class Barco extends Figura{
 	}
 	
 	public void setMangueras(int posicion, boolean estado){
-		this.mangueras.put((Integer)posicion, (Boolean)estado);
+		this.mangueras.put(posicion, estado);
 	}
 	
 	public boolean getMangueras(int posicion){
-		return this.mangueras.get((Integer)posicion);
+		return this.mangueras.get(posicion);
 	}
 	
 	public void mangueraDestruida(int posicion){		
-		this.mangueras.remove((Integer)posicion);
-		this.mangueras.put((Integer)posicion, (Boolean)false);
+		this.mangueras.remove(posicion);
+		this.mangueras.put(posicion, false);
 	}
 }

@@ -25,6 +25,7 @@ public class DAOFigurasPartidas implements IDAOFigurasPartidas{
 		return true;
 	}
 	
+	@Override
 	public List<VOFigurasPartidas> listarFigurasPartidasIdPartida(IConexion iConn, int idP) throws FigurasPartidasIdPartidaException{		
 		try {
 			String query = this.consultas.allFigurasPartidasIdPartida();
@@ -53,6 +54,7 @@ public class DAOFigurasPartidas implements IDAOFigurasPartidas{
 		}
 	}
 	
+	@Override
 	public void agregarFigurasPartidas(IConexion iConn, List<VOFigurasPartidas> listaFiguras) throws AgregarFigurasPartidasException{
 		try	{
 			String query = this.consultas.insertarFigurasPartidas();

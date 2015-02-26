@@ -7,12 +7,14 @@ import servidor.persistencia.daos.IDAOPartidas;
 
 public class FabricaMySQL implements FabricaAbstracta{
 		
+	@Override
 	public IDAOPartidas crearDAOPartidas(){
-		return ((IDAOPartidas) new DAOPartidas());
+		return (new DAOPartidas());
 	}
 	
+	@Override
 	public IDAOFigurasPartidas crearDAOFigurasPartidas(){
-		return ((IDAOFigurasPartidas) new DAOFigurasPartidas());
+		return (new DAOFigurasPartidas());
 	}
 	
 }

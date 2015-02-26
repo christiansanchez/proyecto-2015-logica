@@ -28,6 +28,7 @@ public class DAOPartidas implements IDAOPartidas{
 		this.consultas = new ConsultaPartidas();			
 	}
 
+	@Override
 	public List<VOPartida> listarPartidasCreadas(IConexion iConn) throws ListarPartidasCreadasException{
 		try{
 			String query = this.consultas.findPartidasCreadas();
@@ -59,6 +60,7 @@ public class DAOPartidas implements IDAOPartidas{
 		}
 	}
 
+	@Override
 	public VOPartida find(IConexion iConn, String nombrePartida)throws BuscarPartidasException{
 		try {			
 			String query = this.consultas.findPartidasNombre();
@@ -91,6 +93,7 @@ public class DAOPartidas implements IDAOPartidas{
 		}	
 	}
 	
+	@Override
 	public void updatePartidaCredaToEnCurso(IConexion iConn, String nombrePartida, int idPartida) throws ActualizarEstadoPartidaException{
 		try {			
 			String query = this.consultas.updatePartidaCreadaToEnCurso();
@@ -105,6 +108,7 @@ public class DAOPartidas implements IDAOPartidas{
 		}
 	}
 	
+	@Override
 	public boolean hasPartidaEnCurso(IConexion iConn, String nombrePartida) throws ExistePartidaEnCursoException{
 		try {		
 			boolean resultado = false;
@@ -125,6 +129,7 @@ public class DAOPartidas implements IDAOPartidas{
 		}
 	}
 	
+	@Override
 	public void updatePartidaEnCursoToCreada(IConexion iConn, String nombrePartida) throws ActualizarEstadoPartidaException{
 		try {			
 			String query = this.consultas.updatePartidaEnCursoToCreada();
@@ -138,6 +143,7 @@ public class DAOPartidas implements IDAOPartidas{
 		}
 	}
 	
+	@Override
 	public void updatePartidaEnCursoToTerminada(IConexion iConn, String nombrePartida) throws ActualizarEstadoPartidaException{
 		try {			
 			String query = this.consultas.updatePartidaEnCursoToTerminada();
@@ -151,6 +157,7 @@ public class DAOPartidas implements IDAOPartidas{
 		}
 	}
 	
+	@Override
 	public VOPartida findPartidaEnCurso(IConexion iConn, String nombrePartida) throws BuscarPartidasException{
 		try {			
 			String query = this.consultas.findPartidasEnCurso();
@@ -183,6 +190,7 @@ public class DAOPartidas implements IDAOPartidas{
 		}	
 	}
 	
+	@Override
 	public void agregarPartidaEnCurso(IConexion iConn, VOPartida voPartida) throws AgregarPartidaException{
 		try	{				
 			String query = this.consultas.agregarPartidaEnCurso();
