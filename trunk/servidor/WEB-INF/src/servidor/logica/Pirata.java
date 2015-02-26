@@ -20,7 +20,7 @@ public class Pirata extends Rol{
 	}
 		
 	public void setLancha(int posicion, Lancha lancha){
-		this.lanchas.put((Integer)posicion, lancha);
+		this.lanchas.put(posicion, lancha);
 	}
 	
 	public boolean hasLancha(int posicion){
@@ -29,7 +29,7 @@ public class Pirata extends Rol{
 	}
 	
 	public Lancha getLancha(int posicion){
-		return this.lanchas.get((Integer)posicion);
+		return this.lanchas.get(posicion);
 	}
 	
 	public void impactoLancha(int posicion){

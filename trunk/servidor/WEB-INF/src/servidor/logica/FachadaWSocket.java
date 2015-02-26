@@ -1,30 +1,19 @@
 package servidor.logica;
+
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-import org.apache.axis2.AxisFault;
-
 import servidor.excepciones.MonitorException;
-import servidor.logica.WservicejuegoStub.GetCargarPartidaResponse;
-import servidor.logica.WservicejuegoStub.GetUnirsePartidaResponse;
-import servidor.logica.WservicejuegoStub.SetCargarPartida;
-import servidor.logica.WservicejuegoStub.SetCargarPartidaResponse;
-import servidor.logica.WservicejuegoStub.SetPartida;
-import servidor.logica.WservicejuegoStub.SetPartidaResponse;
-import servidor.logica.monitor.MonitorLecturaEscritura;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.rmi.RemoteException;
-import java.util.Properties;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 /*
  * Clase encargada de definir la logica y los metodos utilizados
@@ -34,30 +23,9 @@ import java.util.Set;
 public class FachadaWSocket{
 	
 	private static Set<Session> clients = Collections.synchronizedSet(new HashSet<Session>());
-	private static FachadaWSocket instancia = null;
-	private MonitorLecturaEscritura monitorJuego;
-	private Partidas partidas;
-	private String urlWebService;
 	
-	public static FachadaWSocket getInstancia(){
-		if(instancia == null) {
-			instancia = new FachadaWSocket();
-		}
-		return instancia;
-	}
-	
-	private FachadaWSocket(){
-		this.monitorJuego = MonitorLecturaEscritura.getInstancia();
-		this.partidas = new Partidas();
-		Properties prop = new Properties();	
-		String nombreArchivo = "C:\\Documents and Settings\\christian\\Escritorio\\Proyecto 1\\workspace\\servidor\\configFiles\\config.properties";
-		try{
-			prop.load(new FileInputStream(nombreArchivo));			
-			this.urlWebService =  prop.getProperty("urlWebService");
-		}
-		catch (IOException e ) {
-			System.out.println("Ocurrio error al instanciar fachada");
-		}	
+	public FachadaWSocket(){
+		FachadaSocket.getInstancia();
 	}
 	
 	@OnOpen
@@ -94,6 +62,7 @@ public class FachadaWSocket{
 		    		if(!parts[1].isEmpty()){
 			    		String dataJuego = parts[1];	    		
 				    	if(parts2[1].equals("unirse")){	    		
+				    		//cuando el segundo jugador se une a una partida creada o cargada
 			    			boolean result = this.unirsePartida(dataJuego);
 			    			resultado += "responseAction:unirse;result:" + result + "," + dataJuego;
 			    			this.sendMessage(session, resultado);
@@ -128,31 +97,37 @@ public class FachadaWSocket{
 				    		resultado += "responseAction:lanchaDestruida;result:" + result + "," + dataJuego;
 				    		this.sendMessage(session, resultado);
 				    	}
-				    	else if(parts2[1].equals("dibujar")){	  
+				    	else if(parts2[1].equals("dibujar")){	
+				    		//utilizado para la sincronizacion
 				    		resultado += "responseAction:dibujar;" + dataJuego;
 				    		this.sendMessage(session, resultado);
 				    	}
 				    	else if(parts2[1].equals("hasPartida")){	  
+				    		//consulta si la partida esta creada en memoria
 				    		boolean result = this.hasPartida(dataJuego);
 				    		resultado += "responseAction:hasPartida;result:" + result + "," + dataJuego;
 				    		this.sendMessage(session, resultado);
 				    	}
 				    	else if(parts2[1].equals("setPartida")){	  
+				    		//crear una nueva partida ingresando el primer jugador
 				    		boolean result = this.setPartida(dataJuego);
 				    		resultado += "responseAction:setPartida;result:" + result + "," + dataJuego;
 				    		this.sendMessage(session, resultado);
 				    	}
-				    	else if(parts2[1].equals("getUnirsePartida")){	  
+				    	else if(parts2[1].equals("getUnirsePartida")){	 
+				    		//listado de partidas para poder unirse
 				    		String result = this.getUnirsePartida();
 				    		resultado += "responseAction:getUnirsePartida;result:" + result;
 				    		this.sendMessage(session, resultado);
 				    	}
-				    	else if(parts2[1].equals("getCargarPartida")){	  
+				    	else if(parts2[1].equals("getCargarPartida")){	 
+				    		//listado cargado de db para cargar una partida
 				    		String result = this.getCargarPartida();
 				    		resultado += "responseAction:getCargarPartida;result:" + result;
 				    		this.sendMessage(session, resultado);
 				    	}
-				    	else if(parts2[1].equals("setCargarPartida")){	  
+				    	else if(parts2[1].equals("setCargarPartida")){	
+				    		//empezar una partida que estaba guardada
 				    		String result = this.setCargarPartida(dataJuego);
 				    		resultado += "responseAction:setCargarPartida;result:" + result;
 				    		this.sendMessage(session, resultado);
@@ -165,78 +140,85 @@ public class FachadaWSocket{
 	
 	private String setCargarPartida(String dataJuego){
 		String resultado = "";
-		String nombrePartida = "";
-		String rolPartida = "";
-		String[] parts = dataJuego.split(",");	    		
-		for(String palabra2: parts){
-			String[] parts2 = palabra2.split(":");
-			if(parts2[0].equals("nombrePartida")){
-				nombrePartida = parts2[1];
-			}
-			else if(parts2[0].equals("rolPartida")){
-				rolPartida = parts2[1];
-			}
-		}
-		nombrePartida = nombrePartida.trim();
-		rolPartida = rolPartida.trim();		
-		
-		FachadaWSocket isntancia = FachadaWSocket.getInstancia();
-		try {
-			isntancia.monitorJuego.comenzarEscritura();			
-			WservicejuegoStub clienteWS;
-			clienteWS = new WservicejuegoStub(isntancia.urlWebService);
-			SetCargarPartida reqSetCargarPartida = new SetCargarPartida();
-			reqSetCargarPartida.setNombrePartida(nombrePartida);
-			reqSetCargarPartida.setRolPartida(rolPartida);
-			SetCargarPartidaResponse respSetCargarPartida;			
-			respSetCargarPartida = clienteWS.setCargarPartida(reqSetCargarPartida);
-			resultado = respSetCargarPartida.get_return();
-			//TODO: pasar lo de web service para aca			
-		} 
-		catch (AxisFault e1) {
-			resultado = "ERROR AXIS";
-		}			
-		catch (RemoteException | FachadaExceptionException0 | MonitorException e) {				
-			resultado = "ERRROR";					
-		}	
-		finally{
-			isntancia.monitorJuego.terminarEscritura();
-		}
+//		String nombrePartida = "";
+//		String rolPartida = "";
+//		String[] parts = dataJuego.split(",");	    		
+//		for(String palabra2: parts){
+//			String[] parts2 = palabra2.split(":");
+//			if(parts2[0].equals("nombrePartida")){
+//				nombrePartida = parts2[1];
+//			}
+//			else if(parts2[0].equals("rolPartida")){
+//				rolPartida = parts2[1];
+//			}
+//		}
+//		nombrePartida = nombrePartida.trim();
+//		rolPartida = rolPartida.trim();		
+//		
+//		FachadaSocket isntancia = FachadaSocket.getInstancia();
+//		try {
+//			isntancia.monitorJuego.comenzarEscritura();			
+//			WservicejuegoStub clienteWS;
+//			clienteWS = new WservicejuegoStub(isntancia.urlWebService);
+//			SetCargarPartida reqSetCargarPartida = new SetCargarPartida();
+//			reqSetCargarPartida.setNombrePartida(nombrePartida);
+//			reqSetCargarPartida.setRolPartida(rolPartida);
+//			SetCargarPartidaResponse respSetCargarPartida;			
+//			respSetCargarPartida = clienteWS.setCargarPartida(reqSetCargarPartida);
+//			resultado = respSetCargarPartida.get_return();
+//			//TODO: pasar lo de web service para aca			
+//		} 
+//		catch (AxisFault e1) {
+//			resultado = "ERROR AXIS";
+//		}			
+//		catch (RemoteException | FachadaExceptionException0 | MonitorException e) {				
+//			resultado = "ERRROR";					
+//		}	
+//		finally{
+//			isntancia.monitorJuego.terminarEscritura();
+//		}
 		return resultado;
 	}
 	
 	private String getCargarPartida(){		
-		FachadaWSocket isntancia = FachadaWSocket.getInstancia();
-		WservicejuegoStub clienteWS;
-		try {
-			clienteWS = new WservicejuegoStub(isntancia.urlWebService);
-		} catch (AxisFault e) {
-			return "ERROR AXIS";
-		}
-		GetCargarPartidaResponse respGetCargarPartida;
-		try {
-			respGetCargarPartida = clienteWS.getCargarPartida();
-			return respGetCargarPartida.get_return();
-		} catch (RemoteException | FachadaExceptionException0 e) {
-			return "ERRROR";
-		}
+		FachadaSocket isntancia = FachadaSocket.getInstancia();
+		return "";
+//		WservicejuegoStub clienteWS;
+//		try {
+//			clienteWS = new WservicejuegoStub(isntancia.urlWebService);
+//		} catch (AxisFault e) {
+//			return "ERROR AXIS";
+//		}
+//		GetCargarPartidaResponse respGetCargarPartida;
+//		try {
+//			respGetCargarPartida = clienteWS.getCargarPartida();
+//			return respGetCargarPartida.get_return();
+//		} catch (RemoteException | FachadaExceptionException0 e) {
+//			return "ERRROR";
+//		}
+	}
+	
+	private boolean guardarPartida(String dataJuego){
+		boolean resultado = false;
+		return resultado;
 	}
 	
 	private String getUnirsePartida(){		
-		FachadaWSocket isntancia = FachadaWSocket.getInstancia();
-		WservicejuegoStub clienteWS;
-		try {
-			clienteWS = new WservicejuegoStub(isntancia.urlWebService);
-		} catch (AxisFault e) {
-			return "ERROR AXIS";
+		String resultado = "";
+		FachadaSocket instancia = FachadaSocket.getInstancia();
+		try{
+			instancia.monitorJuego.comenzarLectura();
+			resultado = instancia.partidas.getPartidasDisponibles();
+			resultado = resultado.replace(" ", "%20");
 		}
-		GetUnirsePartidaResponse respGetUnirsePartida;
-		try {
-			respGetUnirsePartida = clienteWS.getUnirsePartida();
-			return respGetUnirsePartida.get_return();
-		} catch (RemoteException | FachadaExceptionException0 e) {
-			return "ERRROR";
-		}		
+		catch(MonitorException  e){
+			System.out.println("ERROR MONITOR");
+			resultado = "";
+		}
+		finally{
+			instancia.monitorJuego.terminarLectura();
+		}
+		return resultado;	
 	}
 	
 	private boolean hasPartida(String dataJuego){
@@ -250,12 +232,13 @@ public class FachadaWSocket{
 			}
 		}
 		nombrePartida = nombrePartida.trim();
-		FachadaWSocket isntancia = FachadaWSocket.getInstancia();
+		FachadaSocket isntancia = FachadaSocket.getInstancia();
 		resultado = isntancia.partidas.member(nombrePartida);
 		return resultado;
 	}
 
 	private boolean setPartida(String dataJuego){
+		FachadaSocket isntancia = null;
 		boolean resultado = false;
 		String nombrePartida = "";
 		String rolPartida = "";
@@ -278,8 +261,8 @@ public class FachadaWSocket{
 		rolPartida = rolPartida.trim();
 		if (nombrePartida.isEmpty() || tipoMapa.isEmpty() || rolPartida.isEmpty()){
 			return false;
-		}
-		FachadaWSocket isntancia = FachadaWSocket.getInstancia();
+		}		
+		isntancia = FachadaSocket.getInstancia();
 		try{			
 			isntancia.monitorJuego.comenzarEscritura();
 			if(!isntancia.partidas.member(nombrePartida)) {
@@ -308,15 +291,15 @@ public class FachadaWSocket{
 					partidaNueva = new Partida(nombrePartida, jugador2, jugador1, mapa);
 				}
 				isntancia.partidas.insert(partidaNueva);
-				resultado = true;
+				resultado = true;				
 			}			
 		}
 		catch(MonitorException e){
 			System.out.println("ERROR MONITOR");
 			resultado = false;
 		}
-		finally {	
-			instancia.monitorJuego.terminarEscritura();
+		finally {
+			isntancia.monitorJuego.terminarEscritura();
         } 
 		return resultado;
 	}
@@ -328,27 +311,166 @@ public class FachadaWSocket{
 	
 	private boolean lanchaDestruida(String dataJuego){
 		boolean resultado = false;
+		String nombrePartida = "";
+		int numeroLancha = 0;
+		String[] parts = dataJuego.split(",");	    		
+		for(String palabra2: parts){
+			String[] parts2 = palabra2.split(":");
+			if(parts2[0].equals("numeroLancha")){
+				numeroLancha = Integer.parseInt(parts2[1]);
+			}
+			else if(parts2[0].equals("nombrePartida")){
+				nombrePartida = parts2[1];
+			}
+		}
+		nombrePartida = nombrePartida.trim();
+		if(!nombrePartida.isEmpty() && numeroLancha > 0 && numeroLancha < 4){
+			FachadaSocket instancia = FachadaSocket.getInstancia();
+			try{
+				instancia.monitorJuego.comenzarEscritura();
+				Partida partida = instancia.partidas.find(nombrePartida);
+				Jugador jugador = partida.getLanchaPirata();
+				Pirata pirataRol = (Pirata)jugador.getRol();
+				pirataRol.destruirLancha(numeroLancha);
+			}
+			catch(MonitorException e){
+				resultado = false;
+			}
+			finally{
+				instancia.monitorJuego.terminarEscritura();
+			}
+		}		
 		return resultado;
 	}
 	
 	private boolean impactoBarco(String dataJuego){
 		boolean resultado = false;
+		String nombrePartida = "";
+		int numeroManguera = 0;
+		String[] parts = dataJuego.split(",");	    		
+		for(String palabra2: parts){
+			String[] parts2 = palabra2.split(":");
+			if(parts2[0].equals("numeroManguera")){
+				numeroManguera = Integer.parseInt(parts2[1]);
+			}
+			else if(parts2[0].equals("nombrePartida")){
+				nombrePartida = parts2[1];
+			}
+		}
+		nombrePartida = nombrePartida.trim();
+		if(!nombrePartida.isEmpty() && numeroManguera > 0 && numeroManguera < 9){
+			FachadaSocket instancia = FachadaSocket.getInstancia();
+			try{
+				instancia.monitorJuego.comenzarEscritura();
+				Partida partida = instancia.partidas.find(nombrePartida);
+				Jugador jugador = partida.getBarcoCarguero();
+				BarcoCarguero barcoCarguero = (BarcoCarguero)jugador.getRol();				
+				barcoCarguero.getBarco().mangueraDestruida(numeroManguera);
+			}
+			catch(MonitorException e){
+				resultado = false;
+			}
+			finally{
+				instancia.monitorJuego.terminarEscritura();
+			}
+		}		
 		return resultado;
 	}
 	
 	private boolean impactoLancha(String dataJuego, Session session){
 		boolean resultado = false;
+		String nombrePartida = "";
+		int numeroManguera = 0;
+		String[] parts = dataJuego.split(",");	    		
+		for(String palabra2: parts){
+			String[] parts2 = palabra2.split(":");
+			if(parts2[0].equals("numeroManguera")){
+				numeroManguera = Integer.parseInt(parts2[1]);
+			}
+			else if(parts2[0].equals("nombrePartida")){
+				nombrePartida = parts2[1];
+			}
+		}
+		nombrePartida = nombrePartida.trim();
+		if(!nombrePartida.isEmpty() && numeroManguera > 0 && numeroManguera < 9){
+			FachadaSocket instancia = FachadaSocket.getInstancia();
+			try{
+				instancia.monitorJuego.comenzarEscritura();
+				Partida partida = instancia.partidas.find(nombrePartida);
+				Jugador jugador = partida.getBarcoCarguero();
+				BarcoCarguero barcoCarguero = (BarcoCarguero)jugador.getRol();				
+				barcoCarguero.getBarco().mangueraDestruida(numeroManguera);
+			}
+			catch(MonitorException e){
+				resultado = false;
+			}
+			finally{
+				instancia.monitorJuego.terminarEscritura();
+			}
+		}		
 		return resultado;
 	}
 		
-	private boolean guardarPartida(String dataJuego){
-		boolean resultado = false;
-		return resultado;
-	}
-	
 	private boolean unirsePartida(String dataJuego){
 		boolean resultado = false;
+		String nombrePartida = "";
+		String rolPartida = "";
+		String[] parts = dataJuego.split(",");	    		
+		for(String palabra2: parts){
+			String[] parts2 = palabra2.split(":");
+			if(parts2[0].equals("rolPartida")){
+				rolPartida = parts2[1];
+			}
+			else if(parts2[0].equals("nombrePartida")){
+				nombrePartida = parts2[1];
+			}
+		}
+		nombrePartida = nombrePartida.trim();
+		rolPartida = rolPartida.trim();		
+		if (nombrePartida.isEmpty() || rolPartida.isEmpty()){
+			return resultado;
+		}
+		
+		FachadaSocket instancia = FachadaSocket.getInstancia();
+		try {
+			instancia.monitorJuego.comenzarEscritura();
+			if(!instancia.partidas.member(nombrePartida)) {
+				return resultado;
+			}
+			Partida partidaCreada = instancia.partidas.find(nombrePartida);
+			if (partidaCreada.getEstadoPartida() != EstadoPartida.CREADA){
+				return resultado;
+			}
+			Jugador jugador2 = null;
+			Jugador jugadorPartida = null;
+			if(rolPartida.equals("BARCOCARGUERO")){											
+				jugadorPartida = partidaCreada.getBarcoCarguero();
+				if(jugadorPartida == null){
+					Barco barco = new Barco();
+					barco.barcoNuevo();
+					BarcoCarguero barcoCarguero = new BarcoCarguero(barco);
+					jugador2 = new Jugador(barcoCarguero);
+					partidaCreada.setBarcoCarguero(jugador2);
+				}
+			}
+			else{						
+				jugadorPartida = partidaCreada.getLanchaPirata();
+				if(jugadorPartida == null){
+					Pirata pirata = new Pirata();
+					pirata.pirataNuevo();
+					jugador2 = new Jugador(pirata);
+					partidaCreada.setLanchaPirata(jugador2);							
+				}
+			}
+			EstadoPartida estadoPartida = EstadoPartida.ENCURSO;
+			partidaCreada.setEstadoPartida(estadoPartida);
+			resultado = true;
+		} catch (MonitorException e) {
+			System.out.println("ERROR MONITOR");			 
+		}
+		finally{
+			instancia.monitorJuego.terminarEscritura();
+		}
 		return resultado;
 	}
-	
 }

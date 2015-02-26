@@ -41,6 +41,7 @@ public class PoolConexiones implements IPoolConexiones{
 		} 				
 	}
 
+	@Override
 	public synchronized void liberarConexion(IConexion conection, boolean ok) throws PersistenciaException{				
 		try{
 			if(ok){								
@@ -60,6 +61,7 @@ public class PoolConexiones implements IPoolConexiones{
 		}
 	}
 
+	@Override
 	public synchronized IConexion obtenerConexion(boolean modifica) throws PersistenciaException{
 		try {
 			if((this.creadas < this.tamanio) && (this.tope == 0)){
@@ -67,7 +69,7 @@ public class PoolConexiones implements IPoolConexiones{
 				Conexion conn = new Conexion(DriverManager.getConnection(this.url, this.user, this.password));
 				conn.getConnection().setTransactionIsolation(this.nivelTransaccionalidad);
 				conn.getConnection().setAutoCommit(false);				
-				return ((IConexion)conn);				 
+				return (conn);				 
 			}
 			else{					
 				while(this.tope == 0){
@@ -76,7 +78,7 @@ public class PoolConexiones implements IPoolConexiones{
 				this.tope--;
 				Conexion auxCon = this.conexiones[this.tope]; 
 				this.conexiones[this.tope] = null;
-				return (IConexion)auxCon;									
+				return auxCon;									
 			}
 		}	
 		catch (InterruptedException e){
