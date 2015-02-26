@@ -40,14 +40,14 @@ public class FachadaWSocket{
 	
 	private void sendMessage(Session session, String resultado){
 		for(Session client : clients){
-			if (!client.equals(session)){
+			//if (!client.equals(session)){
 				try {
 	    			  client.getBasicRemote().sendText(resultado);
 				}
 				catch (IOException e) {
 	    			  System.out.println("Ocurrio un error al enviar mensaje"); 
 				}
-			}
+			//}
 		}
 	}	
 	
