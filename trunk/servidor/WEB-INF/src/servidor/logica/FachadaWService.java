@@ -16,13 +16,8 @@ import servidor.valueObjects.VOPartida;
  * Clase encargada de definir la logica y los metodos utilizados
  * desde el web service.
  */
-public class FachadaWService{
-	
-	public boolean hasPartida(String nombrePartida) throws FachadaException{
-		nombrePartida = nombrePartida.trim();
-		return (Fachada.getInstancia()).partidas.member(nombrePartida);
-	}
-	
+public class FachadaWService {
+
 	public boolean setPartida(String nombrePartida, String rolPartida, String tipoMapa) throws FachadaException{
 		boolean resultado = false;
 		nombrePartida = nombrePartida.trim();

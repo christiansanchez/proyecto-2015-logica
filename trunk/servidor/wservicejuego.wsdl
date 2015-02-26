@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://logica.servidor" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax21="http://excepciones.servidor/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://logica.servidor">
+    <wsdl:types>
+        <xs:schema xmlns:ax22="http://logica.servidor" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://excepciones.servidor/xsd">
+            <xs:import namespace="http://logica.servidor"/>
+            <xs:complexType name="GeneralException">
+                <xs:complexContent>
+                    <xs:extension base="ns:Exception">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="mensaje" nillable="true" type="xs:string"/>
+                            <xs:element minOccurs="0" name="message" nillable="true" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:complexType name="FachadaException">
+                <xs:complexContent>
+                    <xs:extension base="ax21:GeneralException">
+                        <xs:sequence/>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:ax23="http://excepciones.servidor/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://logica.servidor">
+            <xs:import namespace="http://excepciones.servidor/xsd"/>
+            <xs:complexType name="Exception">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Exception" nillable="true" type="xs:anyType"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="FachadaException">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="FachadaException" nillable="true" type="ax23:FachadaException"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="setPartida">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="nombrePartida" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="rolPartida" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="tipoMapa" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="setPartidaResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getCargarPartidaResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getUnirsePartidaResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="setCargarPartida">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="nombrePartida" nillable="true" type="xs:string"/>
+                        <xs:element minOccurs="0" name="rolPartida" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="setCargarPartidaResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="getUnirsePartidaRequest"/>
+    <wsdl:message name="getUnirsePartidaResponse">
+        <wsdl:part name="parameters" element="ns:getUnirsePartidaResponse"/>
+    </wsdl:message>
+    <wsdl:message name="FachadaException">
+        <wsdl:part name="parameters" element="ns:FachadaException"/>
+    </wsdl:message>
+    <wsdl:message name="setPartidaRequest">
+        <wsdl:part name="parameters" element="ns:setPartida"/>
+    </wsdl:message>
+    <wsdl:message name="setPartidaResponse">
+        <wsdl:part name="parameters" element="ns:setPartidaResponse"/>
+    </wsdl:message>
+    <wsdl:message name="setCargarPartidaRequest">
+        <wsdl:part name="parameters" element="ns:setCargarPartida"/>
+    </wsdl:message>
+    <wsdl:message name="setCargarPartidaResponse">
+        <wsdl:part name="parameters" element="ns:setCargarPartidaResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getCargarPartidaRequest"/>
+    <wsdl:message name="getCargarPartidaResponse">
+        <wsdl:part name="parameters" element="ns:getCargarPartidaResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="wservicejuegoPortType">
+        <wsdl:operation name="getUnirsePartida">
+            <wsdl:input message="ns:getUnirsePartidaRequest" wsaw:Action="urn:getUnirsePartida"/>
+            <wsdl:output message="ns:getUnirsePartidaResponse" wsaw:Action="urn:getUnirsePartidaResponse"/>
+            <wsdl:fault message="ns:FachadaException" name="FachadaException" wsaw:Action="urn:getUnirsePartidaFachadaException"/>
+        </wsdl:operation>
+        <wsdl:operation name="setPartida">
+            <wsdl:input message="ns:setPartidaRequest" wsaw:Action="urn:setPartida"/>
+            <wsdl:output message="ns:setPartidaResponse" wsaw:Action="urn:setPartidaResponse"/>
+            <wsdl:fault message="ns:FachadaException" name="FachadaException" wsaw:Action="urn:setPartidaFachadaException"/>
+        </wsdl:operation>
+        <wsdl:operation name="setCargarPartida">
+            <wsdl:input message="ns:setCargarPartidaRequest" wsaw:Action="urn:setCargarPartida"/>
+            <wsdl:output message="ns:setCargarPartidaResponse" wsaw:Action="urn:setCargarPartidaResponse"/>
+            <wsdl:fault message="ns:FachadaException" name="FachadaException" wsaw:Action="urn:setCargarPartidaFachadaException"/>
+        </wsdl:operation>
+        <wsdl:operation name="getCargarPartida">
+            <wsdl:input message="ns:getCargarPartidaRequest" wsaw:Action="urn:getCargarPartida"/>
+            <wsdl:output message="ns:getCargarPartidaResponse" wsaw:Action="urn:getCargarPartidaResponse"/>
+            <wsdl:fault message="ns:FachadaException" name="FachadaException" wsaw:Action="urn:getCargarPartidaFachadaException"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="wservicejuegoSoap11Binding" type="ns:wservicejuegoPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getUnirsePartida">
+            <soap:operation soapAction="urn:getUnirsePartida" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="FachadaException">
+                <soap:fault use="literal" name="FachadaException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="setPartida">
+            <soap:operation soapAction="urn:setPartida" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="FachadaException">
+                <soap:fault use="literal" name="FachadaException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="setCargarPartida">
+            <soap:operation soapAction="urn:setCargarPartida" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="FachadaException">
+                <soap:fault use="literal" name="FachadaException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getCargarPartida">
+            <soap:operation soapAction="urn:getCargarPartida" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="FachadaException">
+                <soap:fault use="literal" name="FachadaException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="wservicejuegoSoap12Binding" type="ns:wservicejuegoPortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="getUnirsePartida">
+            <soap12:operation soapAction="urn:getUnirsePartida" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="FachadaException">
+                <soap12:fault use="literal" name="FachadaException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="setPartida">
+            <soap12:operation soapAction="urn:setPartida" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="FachadaException">
+                <soap12:fault use="literal" name="FachadaException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="setCargarPartida">
+            <soap12:operation soapAction="urn:setCargarPartida" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="FachadaException">
+                <soap12:fault use="literal" name="FachadaException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getCargarPartida">
+            <soap12:operation soapAction="urn:getCargarPartida" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="FachadaException">
+                <soap12:fault use="literal" name="FachadaException"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="wservicejuegoHttpBinding" type="ns:wservicejuegoPortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="getUnirsePartida">
+            <http:operation location="wservicejuego/getUnirsePartida"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="getUnirsePartida"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="getUnirsePartida"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="setPartida">
+            <http:operation location="wservicejuego/setPartida"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="setPartida"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="setPartida"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="setCargarPartida">
+            <http:operation location="wservicejuego/setCargarPartida"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="setCargarPartida"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="setCargarPartida"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getCargarPartida">
+            <http:operation location="wservicejuego/getCargarPartida"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="getCargarPartida"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="getCargarPartida"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="wservicejuego">
+        <wsdl:port name="wservicejuegoHttpSoap11Endpoint" binding="ns:wservicejuegoSoap11Binding">
+            <soap:address location="http://192.168.1.45:8080/axis2/services/wservicejuego.wservicejuegoHttpSoap11Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="wservicejuegoHttpSoap12Endpoint" binding="ns:wservicejuegoSoap12Binding">
+            <soap12:address location="http://192.168.1.45:8080/axis2/services/wservicejuego.wservicejuegoHttpSoap12Endpoint/"/>
+        </wsdl:port>
+        <wsdl:port name="wservicejuegoHttpEndpoint" binding="ns:wservicejuegoHttpBinding">
+            <http:address location="http://192.168.1.45:8080/axis2/services/wservicejuego.wservicejuegoHttpEndpoint/"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

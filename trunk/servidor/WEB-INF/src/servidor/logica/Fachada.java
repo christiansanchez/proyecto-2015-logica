@@ -24,6 +24,7 @@ public class Fachada {
 	protected MonitorLecturaEscritura monitorJuego;
 	protected IDAOPartidas iPartidas;
 	protected IDAOFigurasPartidas iFigurasPartidas;
+	protected String urlWebService;
 		
 	public static Fachada getInstancia() throws FachadaException{
 		if(instancia == null) {
@@ -38,7 +39,9 @@ public class Fachada {
 		Properties prop = new Properties();	
 		String nombreArchivo = "C:\\Documents and Settings\\christian\\Escritorio\\Proyecto 1\\workspace\\servidor\\configFiles\\config.properties";	
 		try {
-			prop.load(new FileInputStream(nombreArchivo));
+			prop.load(new FileInputStream(nombreArchivo));			
+			this.urlWebService =  prop.getProperty("urlWebService");
+			
 			String pool =  prop.getProperty("nameClassPool");
 			this.ipool = (IPoolConexiones)Class.forName(pool).newInstance();
 
