@@ -6,7 +6,6 @@
 		class="org.apache.axis2.rpc.receivers.RPCMessageReceiver" />
 	</messageReceivers>
 	<parameter name="ServiceClass">servidor.logica.FachadaWService</parameter>
-	<operation name="hasPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
 	<operation name="setPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
 	<operation name="getUnirsePartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
 	<operation name="getCargarPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />

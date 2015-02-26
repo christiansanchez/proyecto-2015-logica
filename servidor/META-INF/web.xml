@@ -8,6 +8,6 @@
 
     <!-- Websocket Barco Carguero vs Piratas -->
     <listener>
-        <listener-class>servidor.logica.FachadaWSocket</listener-class>
+       <listener-class>servidor.logica.FachadaWSocket</listener-class>
     </listener>
 </web-app>
