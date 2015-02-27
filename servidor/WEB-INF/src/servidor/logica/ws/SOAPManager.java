@@ -1,5 +1,6 @@
 package servidor.logica.ws;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.xml.soap.MessageFactory;
@@ -12,6 +13,7 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+import javax.xml.transform.TransformerException;
 
 public class SOAPManager {	
 	private String urlSoapWS;
@@ -28,8 +30,19 @@ public class SOAPManager {
 		return soapConnection;
 	}
 	
-	private String responseToString(SOAPMessage soapMesage){
-		return "";
+	private String responseToString(SOAPMessage soapMesage) throws SOAPException, IOException{		
+		try{
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			soapMesage.writeTo(out);
+			String strMsg = new String(out.toByteArray());
+			String[] resultadoAux1 = strMsg.split("<ns:return>");
+			String[] resultadoAux2 = resultadoAux1[1].split("</ns:return>");
+			return resultadoAux2[0].trim();
+		}
+		catch(Exception e){
+			return "";
+		}
+		
 	}
 	
 	public String setGuardarPartida(String dataJuego) throws SOAPException, IOException{
@@ -93,8 +106,7 @@ public class SOAPManager {
         headers.addHeader("SOAPAction", this.urlSoapWS  + "getCargarPartida");
         soapMessage.saveChanges();
         SOAPConnection connection = this.createConnection();
-		SOAPMessage soapResponse = connection.call(soapMessage, this.urlSoapWS);
-		
+		SOAPMessage soapResponse = connection.call(soapMessage, this.urlSoapWS);		
 		return this.responseToString(soapResponse);		
 	}
 	
