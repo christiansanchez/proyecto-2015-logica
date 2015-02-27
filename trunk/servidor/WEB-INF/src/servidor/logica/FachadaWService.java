@@ -2,6 +2,8 @@ package servidor.logica;
 
 import java.util.List;
 
+import servidor.excepciones.ActualizarEstadoPartidaException;
+import servidor.excepciones.ExistePartidaEnCursoException;
 import servidor.excepciones.FachadaException;
 import servidor.excepciones.ListarPartidasCreadasException;
 import servidor.excepciones.MonitorException;
@@ -24,7 +26,35 @@ public class FachadaWService {
 	}
 	
 	public String setGuardarPartida(String dataJuego){
-		String resultado = "";
+		String resultado = "false";
+		String nombrePartida = "";
+		String estado = "";
+		String[] parts = dataJuego.split(",");
+		for(String palabra2: parts){
+			String[] parts2 = palabra2.split(":");
+			if(parts2[0].equals("nombrePartida")){
+				nombrePartida = parts2[1];
+			}
+			if(parts2[0].equals("estado")){
+				estado = parts2[1];
+			}
+		}
+		if(estado.isEmpty() || estado.isEmpty()){
+			return resultado;
+		}
+		IConexion iConn = null;
+		try {
+			FachadaService instanciaWS = FachadaService.getInstancia();				
+			if(instanciaWS.iPartidas.hasPartidaEnCurso(iConn, nombrePartida)){
+				//si la partida se encuentra en curso en bd, se debe volver a estado creada,
+				//para que pueda volverse a jugar desde el ultimo punto de guardado			
+				instanciaWS.iPartidas.updatePartidaEnCursoToCreada(iConn, nombrePartida);
+				resultado = "true";					
+			}
+		} 
+		catch (ActualizarEstadoPartidaException | ExistePartidaEnCursoException | FachadaException e) {
+			resultado = "false";
+		}
 		return resultado;
 	}
 
