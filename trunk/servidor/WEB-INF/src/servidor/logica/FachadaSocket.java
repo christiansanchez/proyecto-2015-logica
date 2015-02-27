@@ -4,7 +4,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.xml.soap.SOAPException;
+
 import servidor.logica.monitor.MonitorLecturaEscritura;
+import servidor.logica.ws.SOAPManager;
 
 /*
  * Clase fachada para web socket.
@@ -15,6 +18,7 @@ public class FachadaSocket{
 	protected MonitorLecturaEscritura monitorJuego;
 	protected Partidas partidas;
 	protected String urlWebService;
+	protected SOAPManager webservice;
  	
 	public static FachadaSocket getInstancia(){
 		if(instancia == null) {
@@ -31,8 +35,9 @@ public class FachadaSocket{
 		try{
 			prop.load(new FileInputStream(nombreArchivo));			
 			this.urlWebService =  prop.getProperty("urlWebService");
+			this.webservice = new SOAPManager(this.urlWebService); 
 		}
-		catch (IOException e ) {
+		catch (IOException | UnsupportedOperationException | SOAPException e ) {
 			System.out.println("Ocurrio error al instanciar fachada");
 		}	
 	}			

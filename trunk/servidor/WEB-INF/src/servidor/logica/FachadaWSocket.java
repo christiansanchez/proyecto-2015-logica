@@ -2,6 +2,7 @@ package servidor.logica;
 
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +12,9 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+import javax.xml.soap.SOAPException;
+
+import org.apache.axis2.AxisFault;
 
 import servidor.excepciones.MonitorException;
 
@@ -181,21 +185,23 @@ public class FachadaWSocket{
 	}
 	
 	private String getCargarPartida(){		
-		FachadaSocket isntancia = FachadaSocket.getInstancia();
-		return "";
-//		WservicejuegoStub clienteWS;
-//		try {
-//			clienteWS = new WservicejuegoStub(isntancia.urlWebService);
-//		} catch (AxisFault e) {
-//			return "ERROR AXIS";
-//		}
-//		GetCargarPartidaResponse respGetCargarPartida;
-//		try {
-//			respGetCargarPartida = clienteWS.getCargarPartida();
-//			return respGetCargarPartida.get_return();
-//		} catch (RemoteException | FachadaExceptionException0 e) {
-//			return "ERRROR";
-//		}
+		FachadaSocket instancia = FachadaSocket.getInstancia();
+		String resultado = "";
+		try{
+			instancia.monitorJuego.comenzarLectura();			
+			resultado = instancia.webservice.getCargarPartida();
+		}
+		catch(MonitorException  e){
+			System.out.println("ERROR MONITOR");
+			resultado = "ERRROR";
+		} catch (SOAPException | IOException e) {
+			System.out.println("ERROR WEB SERVICE");
+			resultado = "ERRROR";
+		}		
+		finally{
+			instancia.monitorJuego.terminarLectura();
+		}
+		return resultado;
 	}
 	
 	private boolean guardarPartida(String dataJuego){
