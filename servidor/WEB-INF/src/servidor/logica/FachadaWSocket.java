@@ -141,7 +141,7 @@ public class FachadaWSocket{
 	
 	private String setCargarPartida(String dataJuego){
 		dataJuego = dataJuego.replace("\"", "");
-		String resultado = "";
+		String resultado = "false";
 //		String nombrePartida = "";
 //		String rolPartida = "";
 //		String[] parts = dataJuego.split(",");	    		
@@ -184,7 +184,7 @@ public class FachadaWSocket{
 	
 	private String getCargarPartida(){		
 		FachadaSocket instancia = FachadaSocket.getInstancia();
-		String resultado = "";
+		String resultado = "false";
 		try{
 			instancia.monitorJuego.comenzarLectura();			
 			resultado = instancia.webservice.getCargarPartida();
@@ -439,7 +439,7 @@ public class FachadaWSocket{
 	}
 	
 	private String getUnirsePartida(){	
-		String resultado = "";
+		String resultado = "false";
 		FachadaSocket instancia = FachadaSocket.getInstancia();
 		try{
 			instancia.monitorJuego.comenzarLectura();
@@ -448,7 +448,7 @@ public class FachadaWSocket{
 		}
 		catch(MonitorException  e){
 			System.out.println("ERROR MONITOR");
-			resultado = "";
+			resultado = "false";
 		}
 		finally{
 			instancia.monitorJuego.terminarLectura();
@@ -457,7 +457,6 @@ public class FachadaWSocket{
 	}
 	
 	private boolean hasPartida(String dataJuego){
-		dataJuego = dataJuego.replace("\"", "");
 		dataJuego = dataJuego.replace("\"", "");
 		boolean resultado = false;
 		String nombrePartida = "";
