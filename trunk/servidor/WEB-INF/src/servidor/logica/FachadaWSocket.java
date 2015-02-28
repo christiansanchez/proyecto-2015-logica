@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.websocket.OnClose;
+import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
@@ -39,21 +40,41 @@ public class FachadaWSocket{
 	    clients.remove(session);
 	}
 	
-	private void sendMessage(Session session, String resultado){
+	@OnError
+    public void onError(Throwable t) {
+        t.printStackTrace();
+    }
+	
+	private void sendMessage(Session session, String resultado, String aMiMismo){
+		//metodo encargado de enviar mensajes a los clientes conectados
 		for(Session client : clients){
-			//if (!client.equals(session)){
+			boolean enviar = true;
+			if(!aMiMismo.equals("null")) {
+				if (!client.equals(session)){
+					 if (!aMiMismo.equals("false")){
+						 enviar = false;
+					 }				
+				}
+				else if(client.equals(session)){
+					if (!aMiMismo.equals("true")){
+						enviar = false;	
+					}
+				}			
+			}
+			if (enviar){
 				try {
-	    			  client.getBasicRemote().sendText(resultado);
+					client.getBasicRemote().sendText(resultado);
 				}
 				catch (IOException e) {
-	    			  System.out.println("Ocurrio un error al enviar mensaje"); 
+					System.out.println("Ocurrio un error al enviar mensaje"); 
 				}
-			//}
+			}
 		}
 	}	
 	
 	@OnMessage
 	public void onMessage(String message, Session session){	    
+		//metodo encargado de recibir los mensajes desde la capa de presentacion
 	    synchronized(clients){	    	
 	    	String[] parts = message.split(";");
 	    	if(parts.length > 1){
@@ -66,72 +87,84 @@ public class FachadaWSocket{
 				    		//cuando el segundo jugador se une a una partida creada o cargada
 			    			boolean result = this.unirsePartida(dataJuego);
 			    			resultado += "responseAction:unirse;\"result\":" + result + "," + dataJuego;
-			    			this.sendMessage(session, resultado);
+			    			String enviarAMi = "null";
+			    			this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("guardar")){
 				    		//cuando alguno de los jugadores guarda la partida
 				    		boolean result = this.guardarPartida(dataJuego);
 				    		resultado += "responseAction:guardar;\"result\":" + result + "," + dataJuego;
-				    		this.sendMessage(session, resultado);
+				    		String enviarAMi = "false";
+				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("abandonar")){	
 				    		//cuando alguno de los jugadores abandona la partida
 				    		boolean result = this.abandonarPartida(dataJuego);
 				    		resultado += "responseAction:abandonar;\"result\":" + result + "," + dataJuego;
-				    		this.sendMessage(session, resultado);
+				    		String enviarAMi = "false";
+				    		this.sendMessage(session, resultado, enviarAMi);
 				    	} 		    	
 				    	else if(parts2[1].equals("impactoLancha")){	
 				    		//cuando se produce un impacto en una lancha
 				    		boolean result = this.impactoLancha(dataJuego, session);
 				    		resultado += "responseAction:impactoLancha;\"result\":" + result + "," + dataJuego;
-				    		this.sendMessage(session, resultado);
+				    		String enviarAMi = "false";
+				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("impactoBarco")){
 				    		//cuando se produce un impacto en una manguera del barco
 				    		boolean result = this.impactoBarco(dataJuego);
 				    		resultado += "responseAction:impactoBarco;\"result\":" + result + "," + dataJuego;
-				    		this.sendMessage(session, resultado);
+				    		String enviarAMi = "false";
+				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("lanchaDestruida")){
 				    		//cuando barco choca lancha	y la hunde    		
 				    		boolean result = this.lanchaDestruida(dataJuego);
 				    		resultado += "responseAction:lanchaDestruida;\"result\":" + result + "," + dataJuego;
-				    		this.sendMessage(session, resultado);
+				    		String enviarAMi = "false";
+				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("dibujar")){	
 				    		//utilizado para la sincronizacion
 				    		resultado += "responseAction:dibujar;" + dataJuego;
-				    		this.sendMessage(session, resultado);
+				    		String enviarAMi = "null";
+				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("hasPartida")){	  
 				    		//consulta si la partida esta creada en memoria
 				    		boolean result = this.hasPartida(dataJuego);
 				    		resultado += "responseAction:hasPartida;\"result\":" + result + "," + dataJuego;
-				    		this.sendMessage(session, resultado);
+				    		String enviarAMi = "true";
+				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("setPartida")){	  
 				    		//crear una nueva partida ingresando el primer jugador
 				    		boolean result = this.setPartida(dataJuego);
 				    		resultado += "responseAction:setPartida;\"result\":" + result + "," + dataJuego;
-				    		this.sendMessage(session, resultado);
+				    		String enviarAMi = "true";
+				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("getUnirsePartida")){	 
 				    		//listado de partidas para poder unirse
 				    		String result = this.getUnirsePartida();
 				    		resultado += "responseAction:getUnirsePartida;\"result\":" + result  + "," + dataJuego;
-				    		this.sendMessage(session, resultado);
+				    		String enviarAMi = "true";
+				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("getCargarPartida")){	 
 				    		//listado cargado de db para cargar una partida
 				    		String result = this.getCargarPartida();
 				    		resultado += "responseAction:getCargarPartida;\"result\":" + result + "," + dataJuego;
-				    		this.sendMessage(session, resultado);
+				    		String enviarAMi = "true";
+				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("setCargarPartida")){	
 				    		//empezar una partida que estaba guardada
 				    		String result = this.setCargarPartida(dataJuego);
 				    		resultado += "responseAction:setCargarPartida;\"result\":" + result + "," + dataJuego;
-				    		this.sendMessage(session, resultado);
+				    		String enviarAMi = "true";
+				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 		    		}	
 		    	}
@@ -141,44 +174,154 @@ public class FachadaWSocket{
 	
 	private String setCargarPartida(String dataJuego){
 		dataJuego = dataJuego.replace("\"", "");
-		String resultado = "false";
-//		String nombrePartida = "";
-//		String rolPartida = "";
-//		String[] parts = dataJuego.split(",");	    		
-//		for(String palabra2: parts){
-//			String[] parts2 = palabra2.split(":");
-//			if(parts2[0].equals("nombrePartida")){
-//				nombrePartida = parts2[1];
-//			}
-//			else if(parts2[0].equals("rolPartida")){
-//				rolPartida = parts2[1];
-//			}
-//		}
-//		nombrePartida = nombrePartida.trim();
-//		rolPartida = rolPartida.trim();		
-//		
-//		FachadaSocket isntancia = FachadaSocket.getInstancia();
-//		try {
-//			isntancia.monitorJuego.comenzarEscritura();			
-//			WservicejuegoStub clienteWS;
-//			clienteWS = new WservicejuegoStub(isntancia.urlWebService);
-//			SetCargarPartida reqSetCargarPartida = new SetCargarPartida();
-//			reqSetCargarPartida.setNombrePartida(nombrePartida);
-//			reqSetCargarPartida.setRolPartida(rolPartida);
-//			SetCargarPartidaResponse respSetCargarPartida;			
-//			respSetCargarPartida = clienteWS.setCargarPartida(reqSetCargarPartida);
-//			resultado = respSetCargarPartida.get_return();
-//			//TODO: pasar lo de web service para aca			
-//		} 
-//		catch (AxisFault e1) {
-//			resultado = "ERROR AXIS";
-//		}			
-//		catch (RemoteException | FachadaExceptionException0 | MonitorException e) {				
-//			resultado = "ERRROR";					
-//		}	
-//		finally{
-//			isntancia.monitorJuego.terminarEscritura();
-//		}
+		String resultado = "";
+		String nombrePartida = "";
+		String rolPartida = "";
+		String tipoMapa = "";
+		String[] parts = dataJuego.split(",");	    		
+		for(String palabra2: parts){
+			String[] parts2 = palabra2.split(":");
+			if(parts2[0].equals("nombrePartida")){
+				nombrePartida = parts2[1];
+			}
+			else if(parts2[0].equals("rolPartida")){
+				rolPartida = parts2[1];
+			}
+			else if(parts2[0].equals("tipoMapa")){
+				tipoMapa = parts2[1];
+			}
+		}
+		nombrePartida = nombrePartida.trim();
+		rolPartida = rolPartida.trim();	
+		tipoMapa = tipoMapa.trim();
+		if(nombrePartida.isEmpty() || rolPartida.isEmpty() || tipoMapa.isEmpty()){
+			return resultado;
+		}
+		FachadaSocket instancia = FachadaSocket.getInstancia();
+		try {
+			instancia.monitorJuego.comenzarEscritura();
+			resultado = instancia.webservice.setCargarPartida(dataJuego);
+			if(resultado.isEmpty()){
+				return "";
+			}
+			TipoMapa mapaElegido;
+			if (tipoMapa.equals("MARABIERTO")){
+				mapaElegido = TipoMapa.MARABIERTO;
+			}
+			else{
+				mapaElegido = TipoMapa.ISLAS;
+			}
+			Mapa mapa = new Mapa(mapaElegido);
+			Partida partidaNueva = null;
+			Barco barco = new Barco();
+			BarcoCarguero barcoCarguero = new BarcoCarguero(barco);				
+			Pirata pirata = new Pirata();
+			Lancha lancha1 = new Lancha();
+			Lancha lancha2 = new Lancha();
+			Lancha lancha3 = new Lancha();
+			String[] partsResultado = resultado.split(";");
+			for(String lineaResultado: partsResultado){
+				String[] lineaValores = lineaResultado.split(",");
+				if (lineaValores.length > 0){
+					for(String lineaResultado2: lineaValores){
+						String[] lineaValores2 = lineaResultado2.split(":");
+						if(lineaValores2[0].equals("posicionXBarco")){
+							(barcoCarguero.getBarco()).setPosicionX(Float.parseFloat(lineaValores2[1]));
+						}
+						else if(lineaValores2[0].equals("posicionYBarco")){
+							(barcoCarguero.getBarco()).setPosicionY(Float.parseFloat(lineaValores2[1]));
+						}
+						else if(lineaValores2[0].equals("anguloBarco")){
+							(barcoCarguero.getBarco()).setAngulo(Integer.parseInt(lineaValores2[1]));
+						}
+						else if(lineaValores2[0].equals("posicionXLancha1")){
+							lancha1.setPosicionX(Float.parseFloat(lineaValores2[1]));
+						}
+						else if(lineaValores2[0].equals("posicionYLancha1")){
+							lancha1.setPosicionY(Float.parseFloat(lineaValores2[1]));
+						}						
+						else if(lineaValores2[0].equals("energiaLancha1")){
+							lancha1.setImpactosPermitidos(Integer.parseInt(lineaValores2[1]));
+						}
+						else if(lineaValores2[0].equals("anguloLancha1")){
+							lancha1.setAngulo(Integer.parseInt(lineaValores2[1]));
+						}												
+						else if(lineaValores2[0].equals("posicionXLancha2")){
+							lancha2.setPosicionX(Float.parseFloat(lineaValores2[1]));
+						}
+						else if(lineaValores2[0].equals("posicionYLancha2")){
+							lancha2.setPosicionY(Float.parseFloat(lineaValores2[1]));
+						}						
+						else if(lineaValores2[0].equals("energiaLancha2")){
+							lancha2.setImpactosPermitidos(Integer.parseInt(lineaValores2[1]));
+						}
+						else if(lineaValores2[0].equals("anguloLancha2")){
+							lancha2.setAngulo(Integer.parseInt(lineaValores2[1]));
+						}																	
+						else if(lineaValores2[0].equals("posicionXLancha3")){
+							lancha3.setPosicionX(Float.parseFloat(lineaValores2[1]));
+						}
+						else if(lineaValores2[0].equals("posicionYLancha3")){
+							lancha3.setPosicionY(Float.parseFloat(lineaValores2[1]));
+						}						
+						else if(lineaValores2[0].equals("energiaLancha3")){
+							lancha3.setImpactosPermitidos(Integer.parseInt(lineaValores2[1]));
+						}
+						else if(lineaValores2[0].equals("anguloLancha1")){
+							lancha1.setAngulo(Integer.parseInt(lineaValores2[1]));
+						}						
+					}
+				}
+				else{
+					String[] lineaValores2 = lineaResultado.split(":");
+					if(lineaValores2[0].equals("manguera1")){
+						(barcoCarguero.getBarco()).setMangueras(1, Boolean.getBoolean(lineaValores2[1]));
+					}
+					else if(lineaValores2[0].equals("manguera2")){
+						(barcoCarguero.getBarco()).setMangueras(2, Boolean.getBoolean(lineaValores2[1]));
+					}
+					else if(lineaValores2[0].equals("manguera3")){
+						(barcoCarguero.getBarco()).setMangueras(3, Boolean.getBoolean(lineaValores2[1]));						
+					}
+					else if(lineaValores2[0].equals("manguera4")){
+						(barcoCarguero.getBarco()).setMangueras(4, Boolean.getBoolean(lineaValores2[1]));
+					}
+					else if(lineaValores2[0].equals("manguera5")){
+						(barcoCarguero.getBarco()).setMangueras(5, Boolean.getBoolean(lineaValores2[1]));	
+					}
+					else if(lineaValores2[0].equals("manguera6")){
+						(barcoCarguero.getBarco()).setMangueras(6, Boolean.getBoolean(lineaValores2[1]));
+					}
+					else if(lineaValores2[0].equals("manguera7")){
+						(barcoCarguero.getBarco()).setMangueras(7, Boolean.getBoolean(lineaValores2[1]));
+					}
+					else if(lineaValores2[0].equals("manguera8")){
+						(barcoCarguero.getBarco()).setMangueras(8, Boolean.getBoolean(lineaValores2[1]));
+					}					
+				}				
+			}
+			pirata.setLancha(1, lancha1);
+			pirata.setLancha(2, lancha2);
+			pirata.setLancha(3, lancha3);
+			Jugador jugador1 = new Jugador(barcoCarguero);
+			Jugador jugador2 = new Jugador(pirata);	
+			partidaNueva = new Partida(nombrePartida, jugador1, jugador2, mapa);
+			EstadoPartida estado = EstadoPartida.CREADA;				
+			partidaNueva.setEstadoPartida(estado);
+			instancia.partidas.insert(partidaNueva);
+		}
+		catch (SOAPException | IOException e) {
+			System.out.println("ERROR SOAP WEBSERVICE");
+			resultado = "";	
+		}
+		catch (MonitorException e) {	
+			System.out.println("ERRROR MONITOR");
+			resultado = "";			
+		}	
+		finally{
+			instancia.monitorJuego.terminarEscritura();
+			resultado.replace(" ", "%20");
+		}
 		return resultado;
 	}
 	
@@ -205,237 +348,42 @@ public class FachadaWSocket{
 	private boolean guardarPartida(String dataJuego){
 		dataJuego = dataJuego.replace("\"", "");
 		boolean resultado = false;
-//		String nombrePartida = "";
-//		String[] parts = dataJuego.split(",");	    		
-//		for(String palabra2: parts){
-//			String[] parts2 = palabra2.split(":");
-//			if(parts2[0].equals("nombrePartida")){
-//				nombrePartida = parts2[1];
-//			}
-//		}
-//		nombrePartida = nombrePartida.trim();
-//		if(!nombrePartida.isEmpty()){			
-//			FachadaSocket instancia = FachadaSocket.getInstancia();
-//			try{
-//				instancia.monitorJuego.comenzarLectura();//TODO: aca ver si es lectura o escritura				
-//				Partida partida = instancia.partidas.find(nombrePartida);
-//				EstadoPartida estadoTerminada = EstadoPartida.TERMINADA;
-//				EstadoPartida estadoEnCurso = EstadoPartida.ENCURSO;
-//				if(partida.getEstadoPartida() == estadoTerminada){
-//					String dataAux = "nombrePartida:" + nombrePartida + ",estado:terminar";
-//					//instancia.iPartidas.updatePartidaEnCursoToTerminada(iConn, nombrePartida);
-//				}
-//				else if (partida.getEstadoPartida() == estadoEnCurso){
-//					String dataAux = "nombrePartida:" + nombrePartida + ",estado:ingresarNueva";
-//					//if(!instanciaWS.iPartidas.hasPartidaEnCurso(iConn, nombrePartida)){
-//						//como la partida no existe, la inserto
-//						VOPartida voPartidaNueva = new VOPartida(0, nombrePartida);
-//						EstadoPartida estadoNueva = partida.getEstadoPartida();
-//						voPartidaNueva.setEstado(estadoNueva);
-//						Mapa mapa = partida.getMapa();
-//						voPartidaNueva.setMapa(mapa);						
-//						//instanciaWS.iPartidas.agregarPartidaEnCurso(iConn, voPartidaNueva);
-//					//}
-//					//Hay que guardar las figuras de la partida porque estan jugando y
-//					//uno de los jugadores dicidio guardar
-//					VOPartida voPartida = instanciaWS.iPartidas.findPartidaEnCurso(iConn, nombrePartida);					
-//					List<VOFigurasPartidas> listaFiguras = new LinkedList<VOFigurasPartidas>();
-//					VOFigurasPartidas voManguera1 = new VOFigurasPartidas();
-//					VOFigurasPartidas voManguera2 = new VOFigurasPartidas();
-//					VOFigurasPartidas voManguera3 = new VOFigurasPartidas();
-//					VOFigurasPartidas voManguera4 = new VOFigurasPartidas();
-//					VOFigurasPartidas voManguera5 = new VOFigurasPartidas();
-//					VOFigurasPartidas voManguera6 = new VOFigurasPartidas();
-//					VOFigurasPartidas voManguera7 = new VOFigurasPartidas();
-//					VOFigurasPartidas voManguera8 = new VOFigurasPartidas();					
-//					VOFigurasPartidas voBarco = new VOFigurasPartidas();
-//					VOFigurasPartidas voLancha1 = new VOFigurasPartidas();
-//					VOFigurasPartidas voLancha2 = new VOFigurasPartidas();
-//					VOFigurasPartidas voLancha3 = new VOFigurasPartidas();
-//					for(String palabra3: parts){
-//						String[] parts2 = palabra3.split(":");
-//						if(parts2[0].equals("manguera1")){
-//							voManguera1.setId_figura(1); 
-//							voManguera1.setMangueras(Boolean.parseBoolean(parts2[1]));
-//							voManguera1.setId_partida(voPartida.getIdPartida());
-//							voManguera1.setImpactosPermitidos(0);
-//							voManguera1.setPosicionX(0);
-//							voManguera1.setPosicionY(0);
-//							voManguera1.setAngulo(0);
-//						}
-//						else if(parts2[0].equals("manguera2")){
-//							voManguera2.setId_figura(1); 
-//							voManguera2.setMangueras(Boolean.parseBoolean(parts2[1]));
-//							voManguera2.setId_partida(voPartida.getIdPartida());
-//							voManguera2.setImpactosPermitidos(0);
-//							voManguera2.setPosicionX(0);
-//							voManguera2.setPosicionY(0);
-//							voManguera2.setAngulo(0);
-//						}
-//						else if(parts2[0].equals("manguera3")){
-//							voManguera3.setId_figura(1); 
-//							voManguera3.setMangueras(Boolean.parseBoolean(parts2[1]));
-//							voManguera3.setId_partida(voPartida.getIdPartida());
-//							voManguera3.setImpactosPermitidos(0);
-//							voManguera3.setPosicionX(0);
-//							voManguera3.setPosicionY(0);
-//							voManguera3.setAngulo(0);
-//						}
-//						else if(parts2[0].equals("manguera4")){
-//							voManguera4.setId_figura(1); 
-//							voManguera4.setMangueras(Boolean.parseBoolean(parts2[1]));
-//							voManguera4.setId_partida(voPartida.getIdPartida());
-//							voManguera4.setImpactosPermitidos(0);
-//							voManguera4.setPosicionX(0);
-//							voManguera4.setPosicionY(0);
-//							voManguera4.setAngulo(0);
-//						}
-//						else if(parts2[0].equals("manguera5")){
-//							voManguera5.setId_figura(1); 
-//							voManguera5.setMangueras(Boolean.parseBoolean(parts2[1]));
-//							voManguera5.setId_partida(voPartida.getIdPartida());
-//							voManguera5.setImpactosPermitidos(0);
-//							voManguera5.setPosicionX(0);
-//							voManguera5.setPosicionY(0);
-//							voManguera5.setAngulo(0);
-//						}
-//						else if(parts2[0].equals("manguera8")){
-//							voManguera8.setId_figura(1); 
-//							voManguera8.setMangueras(Boolean.parseBoolean(parts2[1]));
-//							voManguera8.setId_partida(voPartida.getIdPartida());
-//							voManguera8.setImpactosPermitidos(0);
-//							voManguera8.setPosicionX(0);
-//							voManguera8.setPosicionY(0);
-//							voManguera8.setAngulo(0);
-//						}
-//						else if(parts2[0].equals("manguera6")){
-//							voManguera6.setId_figura(1); 
-//							voManguera6.setMangueras(Boolean.parseBoolean(parts2[1]));
-//							voManguera6.setId_partida(voPartida.getIdPartida());
-//							voManguera6.setImpactosPermitidos(0);
-//							voManguera6.setPosicionX(0);
-//							voManguera6.setPosicionY(0);
-//							voManguera6.setAngulo(0);
-//						}
-//						else if(parts2[0].equals("manguera7")){
-//							voManguera7.setId_figura(1); 
-//							voManguera7.setMangueras(Boolean.parseBoolean(parts2[1]));
-//							voManguera7.setId_partida(voPartida.getIdPartida());
-//							voManguera7.setImpactosPermitidos(0);
-//							voManguera7.setPosicionX(0);
-//							voManguera7.setPosicionY(0);
-//							voManguera7.setAngulo(0);
-//						}
-//						else if(parts2[0].equals("posicionXLancha3")){
-//							voLancha3.setId_figura(12); 
-//							voLancha3.setMangueras(false);
-//							voLancha3.setId_partida(voPartida.getIdPartida());
-//							voLancha3.setImpactosPermitidos(0);							
-//							voLancha3.setPosicionX(Float.parseFloat(parts2[1]));
-//						}
-//						else if(parts2[0].equals("anguloLancha3")){
-//							voLancha3.setAngulo(Integer.parseInt(parts2[1]));
-//						}		
-//						else if(parts2[0].equals("posicionYLancha3")){
-//							voLancha3.setPosicionY(Float.parseFloat(parts2[1]));
-//						}
-//						else if(parts2[0].equals("energiaLancha3")){
-//							voLancha3.setImpactosPermitidos(Integer.parseInt(parts2[1]));
-//						}
-//						else if(parts2[0].equals("posicionYLancha2")){
-//							voLancha2.setPosicionY(Float.parseFloat(parts2[1]));
-//						}						
-//						else if(parts2[0].equals("anguloLancha2")){
-//							voLancha2.setAngulo(Integer.parseInt(parts2[1]));
-//						}
-//						else if(parts2[0].equals("energiaLancha2")){
-//							voLancha2.setImpactosPermitidos(Integer.parseInt(parts2[1]));
-//						}					
-//						else if(parts2[0].equals("posicionXLancha2")){
-//							voLancha2.setId_figura(11); 
-//							voLancha2.setMangueras(false);
-//							voLancha2.setId_partida(voPartida.getIdPartida());
-//							voLancha2.setImpactosPermitidos(0);							
-//							voLancha2.setPosicionX(Float.parseFloat(parts2[1]));
-//						}
-//						else if(parts2[0].equals("anguloLancha1")){
-//							voLancha1.setAngulo(Integer.parseInt(parts2[1]));
-//						}						
-//						else if(parts2[0].equals("energiaLancha1")){
-//							voLancha1.setImpactosPermitidos(Integer.parseInt(parts2[1]));
-//						}
-//						else if(parts2[0].equals("posicionYLancha1")){
-//							voLancha1.setPosicionY(Float.parseFloat(parts2[1]));
-//						}
-//						else if(parts2[0].equals("posicionXLancha1")){
-//							voLancha1.setId_figura(10); 
-//							voLancha1.setMangueras(false);
-//							voLancha1.setId_partida(voPartida.getIdPartida());
-//							voLancha1.setImpactosPermitidos(0);							
-//							voLancha1.setPosicionX(Float.parseFloat(parts2[1]));	
-//						}
-//						else if(parts2[0].equals("anguloBarco")){
-//							voBarco.setAngulo(Integer.parseInt(parts2[1]));
-//						}
-//						else if(parts2[0].equals("posicionYBarco")){
-//							 voBarco.setPosicionY(Float.parseFloat(parts2[1]));							 
-//						}
-//						else if(parts2[0].equals("posicionXBarco")){
-//							voBarco.setId_figura(9); 
-//							voBarco.setMangueras(false);
-//							voBarco.setId_partida(voPartida.getIdPartida());
-//							voBarco.setImpactosPermitidos(0);							
-//							voBarco.setPosicionX(Float.parseFloat(parts2[1]));							
-//						}						
-//					}
-//					listaFiguras.add(voManguera1);
-//					listaFiguras.add(voManguera2);
-//					listaFiguras.add(voManguera3);
-//					listaFiguras.add(voManguera4);
-//					listaFiguras.add(voManguera5);
-//					listaFiguras.add(voManguera6);
-//					listaFiguras.add(voManguera7);
-//					listaFiguras.add(voManguera8);
-//					listaFiguras.add(voBarco);
-//					listaFiguras.add(voLancha1);
-//					listaFiguras.add(voLancha2);
-//					listaFiguras.add(voLancha3);
-//					instanciaWS.iFigurasPartidas.agregarFigurasPartidas(iConn, listaFiguras);	
-//				}
-//				else{
-//					partida.setEstadoPartida(estadoTerminada);
-//				}
-//			}
-//			catch(MonitorException | PersistenciaException | ActualizarEstadoPartidaException | 
-//				BuscarPartidasException | ExistePartidaEnCursoException | AgregarPartidaException | 
-//				AgregarFigurasPartidasException e){
-//					resultado = false;;
-//					try {                             
-//						instanciaWS.ipool.liberarConexion(iConn, false);
-//		                iConn = null;
-//		                instanciaWS.monitorJuego.terminarEscritura();                 	                  
-//			        }
-//			        catch(PersistenciaException e1) {
-//			        	instanciaWS.monitorJuego.terminarEscritura();    
-//			        	resultado = false;;
-//			        }
-//				}
-//				finally{
-//					instanciaWS.monitorJuego.terminarEscritura();
-//					try {
-//		                if(iConn != null) {                
-//		                	instanciaWS.ipool.liberarConexion(iConn, true);
-//		                	instanciaWS.monitorJuego.terminarEscritura();
-//		                } 	                   
-//		            }
-//		            catch(PersistenciaException e) {
-//		            	instanciaWS.monitorJuego.terminarEscritura();    
-//		            	resultado = false;
-//		            } 	
-//				}
-//		}		
-		return resultado;		
-		
+		String nombrePartida = "";
+		String[] parts = dataJuego.split(",");
+		for(String palabra2: parts){
+			String[] parts2 = palabra2.split(":");
+			if(parts2[0].equals("nombrePartida")){
+				nombrePartida = parts2[1];
+			}
+		}
+		nombrePartida = nombrePartida.trim();		
+		if(!nombrePartida.isEmpty()){
+			try {
+				FachadaSocket instancia = FachadaSocket.getInstancia();			
+				instancia.monitorJuego.comenzarEscritura();						
+				Partida partida = instancia.partidas.find(nombrePartida);
+				EstadoPartida estadoTerminada = EstadoPartida.TERMINADA;
+				EstadoPartida estadoEnCurso = EstadoPartida.ENCURSO;
+				String dataJuegoAux = "";
+				if(partida.getEstadoPartida() == estadoTerminada){
+					dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:terminar";
+				}
+				else if (partida.getEstadoPartida() == estadoEnCurso){					
+					dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:guardar," + dataJuego;
+				}
+				String resultado2 = instancia.webservice.setGuardarPartida(dataJuegoAux);			
+				resultado = Boolean.parseBoolean(resultado2);
+			}
+			catch (MonitorException e) {
+				System.out.println("ERROR MONITOR");
+				resultado = false;
+			}
+			catch (SOAPException | IOException e) {
+				System.out.println("ERROR WEB SERVICE");
+				resultado = false;
+			}			
+		}
+		return resultado;
 	}
 	
 	private String getUnirsePartida(){	
@@ -554,17 +502,15 @@ public class FachadaWSocket{
 		}
 		nombrePartida = nombrePartida.trim();
 		if(!nombrePartida.isEmpty()){
-			//IConexion iConn = null;
 			FachadaSocket instancia = FachadaSocket.getInstancia();
 			try{
-				instancia.monitorJuego.comenzarEscritura();
-				//iConn = instanciaWS.ipool.obtenerConexion(true);						
+				instancia.monitorJuego.comenzarEscritura();					
 				Partida partida = instancia.partidas.find(nombrePartida);
 				EstadoPartida estadoTerminada = EstadoPartida.TERMINADA;				
 				if(partida.getEstadoPartida() == estadoTerminada){
 					String dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:abandonar";
-					String resultado2 = instancia.webservice.setGuardarPartida(dataJuegoAux);
-					resultado = true;
+					String resultado2 = instancia.webservice.setGuardarPartida(dataJuegoAux);					
+					resultado = Boolean.parseBoolean(resultado2);
 				}
 				else{
 					partida.setEstadoPartida(estadoTerminada);
@@ -645,6 +591,7 @@ public class FachadaWSocket{
 				Jugador jugador = partida.getBarcoCarguero();
 				BarcoCarguero barcoCarguero = (BarcoCarguero)jugador.getRol();				
 				barcoCarguero.getBarco().mangueraDestruida(numeroManguera);
+				resultado = true;
 			}
 			catch(MonitorException e){
 				resultado = false;
@@ -660,26 +607,27 @@ public class FachadaWSocket{
 		dataJuego = dataJuego.replace("\"", "");
 		boolean resultado = false;
 		String nombrePartida = "";
-		int numeroManguera = 0;
+		int numeroLancha = 0;
 		String[] parts = dataJuego.split(",");	    		
 		for(String palabra2: parts){
 			String[] parts2 = palabra2.split(":");
-			if(parts2[0].equals("numeroManguera")){
-				numeroManguera = Integer.parseInt(parts2[1]);
+			if(parts2[0].equals("numeroLancha")){				
+				numeroLancha = Integer.parseInt(parts2[1].trim());
 			}
 			else if(parts2[0].equals("nombrePartida")){
 				nombrePartida = parts2[1];
 			}
 		}
 		nombrePartida = nombrePartida.trim();
-		if(!nombrePartida.isEmpty() && numeroManguera > 0 && numeroManguera < 9){
+		if(!nombrePartida.isEmpty() && numeroLancha > 0 && numeroLancha < 4){
 			FachadaSocket instancia = FachadaSocket.getInstancia();
 			try{
 				instancia.monitorJuego.comenzarEscritura();
 				Partida partida = instancia.partidas.find(nombrePartida);
-				Jugador jugador = partida.getBarcoCarguero();
-				BarcoCarguero barcoCarguero = (BarcoCarguero)jugador.getRol();				
-				barcoCarguero.getBarco().mangueraDestruida(numeroManguera);
+				Jugador jugador = partida.getLanchaPirata();
+				Pirata pirataRol = (Pirata)jugador.getRol();
+				pirataRol.impactoLancha(numeroLancha);
+				resultado = true;
 			}
 			catch(MonitorException e){
 				resultado = false;
@@ -687,7 +635,7 @@ public class FachadaWSocket{
 			finally{
 				instancia.monitorJuego.terminarEscritura();
 			}
-		}		
+		}	
 		return resultado;
 	}
 		
