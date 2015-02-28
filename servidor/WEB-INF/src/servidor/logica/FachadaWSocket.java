@@ -132,8 +132,9 @@ public class FachadaWSocket{
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("dibujar")){	
-				    		//utilizado para la sincronizacion				    		
-				    		resultado += "responseAction:dibujar;" + dataJuego;
+				    		//utilizado para la sincronizacion		
+				    		String estado = this.estadoPartida(dataJuego);
+				    		resultado += "responseAction:dibujar;\"status\":" + estado + "," + dataJuego;
 				    		String enviarAMi = "false";
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
