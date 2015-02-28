@@ -202,6 +202,7 @@ public class FachadaWSocket{
 			instancia.monitorJuego.comenzarLectura();
 			if(instancia.partidas.member(nombrePartida)){
 				estado = instancia.partidas.find(nombrePartida).getEstadoPartidaStr();
+				estado = "\"" + estado + "\"";
 			}			
 		}
 		catch (MonitorException e) {	
