@@ -182,6 +182,7 @@ public class FachadaWSocket{
 	}
 	
 	private String estadoPartida(String dataJuego){
+		dataJuego = dataJuego.replace("\"", "");
 		String nombrePartida = "";
 		String estado = "";
 		String[] parts = dataJuego.split(",");
@@ -192,7 +193,7 @@ public class FachadaWSocket{
 			}			
 		}		
 		nombrePartida = nombrePartida.trim();
-		if(!nombrePartida.isEmpty()){
+		if(nombrePartida.isEmpty()){
 			return estado;
 		}
 		FachadaSocket instancia = FachadaSocket.getInstancia();
