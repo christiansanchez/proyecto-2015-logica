@@ -75,4 +75,16 @@ public class Partida {
 	public String getTipoMapa(){
 		return this.mapa.getTipoMapaStr();
 	}
+	
+	public String getEstadoPartidaStr(){
+		if(this.estadoPartida == EstadoPartida.CREADA){
+			return "CREADA";
+		}
+		else if(this.estadoPartida == EstadoPartida.ENCURSO){
+			return "ENCURSO";
+		}
+		else{
+			return "TERMINADA";
+		}		
+	}
 }

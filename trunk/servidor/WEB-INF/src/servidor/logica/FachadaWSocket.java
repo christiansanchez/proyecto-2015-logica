@@ -86,47 +86,53 @@ public class FachadaWSocket{
 				    	if(parts2[1].equals("unirse")){	    		
 				    		//cuando el segundo jugador se une a una partida creada o cargada
 			    			boolean result = this.unirsePartida(dataJuego);
-			    			resultado += "responseAction:unirse;\"result\":" + result + "," + dataJuego;
+			    			String estado = this.estadoPartida(dataJuego);
+			    			resultado += "responseAction:unirse;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 			    			String enviarAMi = "null";
 			    			this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("guardar")){
 				    		//cuando alguno de los jugadores guarda la partida
 				    		boolean result = this.guardarPartida(dataJuego);
-				    		resultado += "responseAction:guardar;\"result\":" + result + "," + dataJuego;
+				    		String estado = this.estadoPartida(dataJuego);
+				    		resultado += "responseAction:guardar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 				    		String enviarAMi = "false";
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("abandonar")){	
 				    		//cuando alguno de los jugadores abandona la partida
 				    		boolean result = this.abandonarPartida(dataJuego);
-				    		resultado += "responseAction:abandonar;\"result\":" + result + "," + dataJuego;
+				    		String estado = this.estadoPartida(dataJuego);
+				    		resultado += "responseAction:abandonar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 				    		String enviarAMi = "false";
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	} 		    	
 				    	else if(parts2[1].equals("impactoLancha")){	
 				    		//cuando se produce un impacto en una lancha
 				    		boolean result = this.impactoLancha(dataJuego, session);
-				    		resultado += "responseAction:impactoLancha;\"result\":" + result + "," + dataJuego;
+				    		String estado = this.estadoPartida(dataJuego);
+				    		resultado += "responseAction:impactoLancha;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 				    		String enviarAMi = "false";
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("impactoBarco")){
 				    		//cuando se produce un impacto en una manguera del barco
 				    		boolean result = this.impactoBarco(dataJuego);
-				    		resultado += "responseAction:impactoBarco;\"result\":" + result + "," + dataJuego;
+				    		String estado = this.estadoPartida(dataJuego);
+				    		resultado += "responseAction:impactoBarco;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 				    		String enviarAMi = "false";
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("lanchaDestruida")){
 				    		//cuando barco choca lancha	y la hunde    		
 				    		boolean result = this.lanchaDestruida(dataJuego);
-				    		resultado += "responseAction:lanchaDestruida;\"result\":" + result + "," + dataJuego;
+				    		String estado = this.estadoPartida(dataJuego);
+				    		resultado += "responseAction:lanchaDestruida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 				    		String enviarAMi = "false";
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("dibujar")){	
-				    		//utilizado para la sincronizacion
+				    		//utilizado para la sincronizacion				    		
 				    		resultado += "responseAction:dibujar;" + dataJuego;
 				    		String enviarAMi = "false";
 				    		this.sendMessage(session, resultado, enviarAMi);
@@ -134,14 +140,16 @@ public class FachadaWSocket{
 				    	else if(parts2[1].equals("hasPartida")){	  
 				    		//consulta si la partida esta creada en memoria
 				    		boolean result = this.hasPartida(dataJuego);
-				    		resultado += "responseAction:hasPartida;\"result\":" + result + "," + dataJuego;
+				    		String estado = this.estadoPartida(dataJuego);
+				    		resultado += "responseAction:hasPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 				    		String enviarAMi = "true";
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("setPartida")){	  
 				    		//crear una nueva partida ingresando el primer jugador
 				    		boolean result = this.setPartida(dataJuego);
-				    		resultado += "responseAction:setPartida;\"result\":" + result + "," + dataJuego;
+				    		String estado = this.estadoPartida(dataJuego);
+				    		resultado += "responseAction:setPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 				    		String enviarAMi = "true";
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
@@ -162,7 +170,8 @@ public class FachadaWSocket{
 				    	else if(parts2[1].equals("setCargarPartida")){	
 				    		//empezar una partida que estaba guardada
 				    		String result = this.setCargarPartida(dataJuego);
-				    		resultado += "responseAction:setCargarPartida;\"result\":" + result + "," + dataJuego;
+				    		String estado = this.estadoPartida(dataJuego);
+				    		resultado += "responseAction:setCargarPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 				    		String enviarAMi = "true";
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
@@ -170,6 +179,38 @@ public class FachadaWSocket{
 		    	}
 	    	}	    	
 	    }
+	}
+	
+	private String estadoPartida(String dataJuego){
+		String nombrePartida = "";
+		String estado = "";
+		String[] parts = dataJuego.split(",");
+		for(String palabra2: parts){
+			String[] parts2 = palabra2.split(":");
+			if(parts2[0].equals("nombrePartida")){
+				nombrePartida = parts2[1];
+			}			
+		}		
+		nombrePartida = nombrePartida.trim();
+		if(!nombrePartida.isEmpty()){
+			return estado;
+		}
+		FachadaSocket instancia = FachadaSocket.getInstancia();
+		try {
+			instancia.monitorJuego.comenzarLectura();
+			if(instancia.partidas.member(nombrePartida)){
+				estado = instancia.partidas.find(nombrePartida).getEstadoPartidaStr();
+			}			
+		}
+		catch (MonitorException e) {	
+			System.out.println("ERRROR MONITOR");
+			estado = "";			
+		}
+		finally{
+			instancia.monitorJuego.terminarLectura();
+			estado = estado.replace(" ", "%20");
+		}
+		return estado;
 	}
 	
 	private String setCargarPartida(String dataJuego){
