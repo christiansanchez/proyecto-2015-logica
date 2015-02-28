@@ -128,7 +128,7 @@ public class FachadaWSocket{
 				    	else if(parts2[1].equals("dibujar")){	
 				    		//utilizado para la sincronizacion
 				    		resultado += "responseAction:dibujar;" + dataJuego;
-				    		String enviarAMi = "null";
+				    		String enviarAMi = "false";
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("hasPartida")){	  
