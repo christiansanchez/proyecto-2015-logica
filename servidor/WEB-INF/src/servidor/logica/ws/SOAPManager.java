@@ -13,8 +13,9 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-import javax.xml.transform.TransformerException;
 
+/*Clase encargada de entablar una conexion con el webservice mediante SOAP, 
+ *ejecutar el metodo seleccionado, obtener la respuesta y retornarla*/
 public class SOAPManager {	
 	private String urlSoapWS;
 	SOAPConnectionFactory soapConnectionFactory;
@@ -56,11 +57,11 @@ public class SOAPManager {
         SOAPBody soapBody = envelope.getBody();
         SOAPElement soapBodyElem = soapBody.addChildElement("setGuardarPartidaRequest", "wservicejuego");
         SOAPElement soapBodyElem1 = soapBodyElem.addChildElement("parameters", "wservicejuego"); 
-        SOAPElement soapBodyElem2 = soapBodyElem1.addChildElement("dataJuego", "wservicejuego");        
-        soapBodyElem2.addTextNode(dataJuego);
+        //SOAPElement soapBodyElem2 = soapBodyElem1.addChildElement("dataJuego", "wservicejuego");        
+        soapBodyElem1.addTextNode(dataJuego);
         
         MimeHeaders headers = soapMessage.getMimeHeaders();
-        headers.addHeader("SOAPAction", this.urlSoapWS  + "setGuardarPartidaRequest");
+        headers.addHeader("SOAPAction", this.urlSoapWS  + "setGuardarPartida");
         soapMessage.saveChanges();
         soapMessage.writeTo(System.out);
         SOAPConnection connection = this.createConnection();
@@ -79,13 +80,13 @@ public class SOAPManager {
         SOAPBody soapBody = envelope.getBody();
         SOAPElement soapBodyElem = soapBody.addChildElement("setCargarPartidaRequest", "wservicejuego");
         SOAPElement soapBodyElem1 = soapBodyElem.addChildElement("parameters", "wservicejuego"); 
-        SOAPElement soapBodyElem2 = soapBodyElem1.addChildElement("dataJuego", "wservicejuego");        
-        soapBodyElem2.addTextNode(dataJuego);
+        //SOAPElement soapBodyElem2 = soapBodyElem1.addChildElement("dataJuego", "wservicejuego");        
+        soapBodyElem1.addTextNode(dataJuego);
         
         MimeHeaders headers = soapMessage.getMimeHeaders();
-        headers.addHeader("SOAPAction", this.urlSoapWS  + "setCargarPartidaRequest");
+        headers.addHeader("SOAPAction", this.urlSoapWS  + "setCargarPartida");
         soapMessage.saveChanges();
-        soapMessage.writeTo(System.out);
+        
         SOAPConnection connection = this.createConnection();
 		SOAPMessage soapResponse = connection.call(soapMessage, this.urlSoapWS);		
 		return this.responseToString(soapResponse);
@@ -121,11 +122,11 @@ public class SOAPManager {
         SOAPBody soapBody = envelope.getBody();
         SOAPElement soapBodyElem = soapBody.addChildElement("getUnirsePartidaRequest", "wservicejuego");
         SOAPElement soapBodyElem1 = soapBodyElem.addChildElement("parameters", "wservicejuego"); 
-        SOAPElement soapBodyElem2 = soapBodyElem1.addChildElement("dataJuego", "wservicejuego");        
-        soapBodyElem2.addTextNode(dataJuego);
+        //SOAPElement soapBodyElem2 = soapBodyElem1.addChildElement("dataJuego", "wservicejuego");        
+        soapBodyElem1.addTextNode(dataJuego);
         
         MimeHeaders headers = soapMessage.getMimeHeaders();
-        headers.addHeader("SOAPAction", this.urlSoapWS  + "getUnirsePartidaRequest");
+        headers.addHeader("SOAPAction", this.urlSoapWS  + "getUnirsePartida");
         soapMessage.saveChanges();
         soapMessage.writeTo(System.out);
         SOAPConnection connection = this.createConnection();
