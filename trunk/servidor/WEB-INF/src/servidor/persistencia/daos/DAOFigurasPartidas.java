@@ -60,13 +60,21 @@ public class DAOFigurasPartidas implements IDAOFigurasPartidas{
 			String query = this.consultas.insertarFigurasPartidas();
 			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);			
 			for(VOFigurasPartidas voFigPart: listaFiguras){
-				pstmt.setInt(1, voFigPart.getId_partida());
-				pstmt.setInt(2, voFigPart.getId_figura());
-				pstmt.setFloat(3, voFigPart.getPosicionX());
-				pstmt.setFloat(4, voFigPart.getPosicionY());	
-				pstmt.setInt(5, voFigPart.getImpactosPermitidos());	
-				pstmt.setBoolean(6, voFigPart.getMangueras());	
-				pstmt.setInt(7, voFigPart.getAngulo());	
+				int idPartida = voFigPart.getId_partida();
+				int idFigura = voFigPart.getId_figura();
+				float posicionX = voFigPart.getPosicionX();
+				float posicionY = voFigPart.getPosicionY();
+				int energia = voFigPart.getImpactosPermitidos();
+				boolean manguera = voFigPart.getMangueras();
+				int angulo = voFigPart.getAngulo();
+				
+				pstmt.setInt(1, idPartida);
+				pstmt.setInt(2, idFigura);
+				pstmt.setFloat(3, posicionX);
+				pstmt.setFloat(4, posicionY);	
+				pstmt.setInt(5, energia);	
+				pstmt.setBoolean(6, manguera);	
+				pstmt.setInt(7, angulo);	
 				pstmt.executeUpdate();
 			}
 			pstmt.close();

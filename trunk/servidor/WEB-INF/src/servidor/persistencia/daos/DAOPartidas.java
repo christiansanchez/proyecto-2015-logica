@@ -10,6 +10,7 @@ import java.util.List;
 import servidor.excepciones.ActualizarEstadoPartidaException;
 import servidor.excepciones.AgregarPartidaException;
 import servidor.excepciones.BuscarPartidasException;
+import servidor.excepciones.EliminarPartidaException;
 import servidor.excepciones.ExistePartidaEnCursoException;
 import servidor.excepciones.ListarPartidasCreadasException;
 import servidor.logica.EstadoPartida;
@@ -110,7 +111,7 @@ public class DAOPartidas implements IDAOPartidas{
 	
 	@Override
 	public boolean hasPartidaEnCurso(IConexion iConn, String nombrePartida) throws ExistePartidaEnCursoException{
-		try {		
+		try {							
 			boolean resultado = false;
 			String query = this.consultas.existePartidaEnCurso();
 			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);
@@ -195,14 +196,30 @@ public class DAOPartidas implements IDAOPartidas{
 		try	{				
 			String query = this.consultas.agregarPartidaEnCurso();
 			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);
-			pstmt.setString(1, voPartida.getNombre());
-			pstmt.setString(2, voPartida.getTipoMapaStrDB());
-			pstmt.setString(3, voPartida.getEstadoStrDB());				
+			String nombrePartida = voPartida.getNombre();
+			String tipoMapa = voPartida.getTipoMapaStrDB();
+			String estadoPartida = voPartida.getEstadoStrDB();
+			pstmt.setString(1, nombrePartida);
+			pstmt.setString(2, tipoMapa);
+			pstmt.setString(3, estadoPartida);				
 			pstmt.executeUpdate();				
 			pstmt.close();			
 		}
 		catch(SQLException e) {
 			throw new AgregarPartidaException();
+		}	
+	}
+	
+	public void eliminarPartida(IConexion iConn, int idPartida) throws EliminarPartidaException{
+		try	{				
+			String query = this.consultas.eliminarPartidaId();
+			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);			
+			pstmt.setInt(1, idPartida);						
+			pstmt.executeUpdate();				
+			pstmt.close();			
+		}
+		catch(SQLException e) {
+			throw new EliminarPartidaException();
 		}	
 	}
 	

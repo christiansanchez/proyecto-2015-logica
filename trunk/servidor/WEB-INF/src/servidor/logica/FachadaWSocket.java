@@ -400,10 +400,11 @@ public class FachadaWSocket{
 				nombrePartida = parts2[1];
 			}
 		}
-		nombrePartida = nombrePartida.trim();		
+		nombrePartida = nombrePartida.trim();
+		FachadaSocket instancia =  null;
 		if(!nombrePartida.isEmpty()){
 			try {
-				FachadaSocket instancia = FachadaSocket.getInstancia();			
+				instancia = FachadaSocket.getInstancia();			
 				instancia.monitorJuego.comenzarEscritura();						
 				Partida partida = instancia.partidas.find(nombrePartida);
 				EstadoPartida estadoTerminada = EstadoPartida.TERMINADA;
@@ -413,7 +414,7 @@ public class FachadaWSocket{
 					dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:terminar";
 				}
 				else if (partida.getEstadoPartida() == estadoEnCurso){					
-					dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:guardar," + dataJuego;
+					dataJuegoAux = "estado:guardar," + dataJuego;
 				}
 				String resultado2 = instancia.webservice.setGuardarPartida(dataJuegoAux);			
 				resultado = Boolean.parseBoolean(resultado2);
@@ -425,7 +426,10 @@ public class FachadaWSocket{
 			catch (SOAPException | IOException e) {
 				System.out.println("ERROR WEB SERVICE");
 				resultado = false;
-			}			
+			}
+			finally{
+				instancia.monitorJuego.terminarEscritura();			
+			}
 		}
 		return resultado;
 	}

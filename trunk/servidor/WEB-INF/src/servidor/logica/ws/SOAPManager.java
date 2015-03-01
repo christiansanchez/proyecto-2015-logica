@@ -14,7 +14,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
-/*Clase encargada de entablar una conexion con el webservice mediante SOAP, 
+/*Clase encargada de establecer una conexion con el webservice mediante SOAP, 
  *ejecutar el metodo seleccionado, obtener la respuesta y retornarla*/
 public class SOAPManager {	
 	private String urlSoapWS;
@@ -63,7 +63,7 @@ public class SOAPManager {
         MimeHeaders headers = soapMessage.getMimeHeaders();
         headers.addHeader("SOAPAction", this.urlSoapWS  + "setGuardarPartida");
         soapMessage.saveChanges();
-        soapMessage.writeTo(System.out);
+
         SOAPConnection connection = this.createConnection();
 		SOAPMessage soapResponse = connection.call(soapMessage, this.urlSoapWS);		
 		return this.responseToString(soapResponse);
@@ -111,27 +111,27 @@ public class SOAPManager {
 		return this.responseToString(soapResponse);		
 	}
 	
-	public String getUnirsePartida(String dataJuego) throws SOAPException, IOException{
-		MessageFactory messageFactory = MessageFactory.newInstance();
-        SOAPMessage soapMessage = messageFactory.createMessage();
-        SOAPPart soapPart = soapMessage.getSOAPPart();
-
-        SOAPEnvelope envelope = soapPart.getEnvelope();
-        envelope.addNamespaceDeclaration("wservicejuego", "http://logica.servidor");
-                
-        SOAPBody soapBody = envelope.getBody();
-        SOAPElement soapBodyElem = soapBody.addChildElement("getUnirsePartidaRequest", "wservicejuego");
-        SOAPElement soapBodyElem1 = soapBodyElem.addChildElement("parameters", "wservicejuego"); 
-        //SOAPElement soapBodyElem2 = soapBodyElem1.addChildElement("dataJuego", "wservicejuego");        
-        soapBodyElem1.addTextNode(dataJuego);
-        
-        MimeHeaders headers = soapMessage.getMimeHeaders();
-        headers.addHeader("SOAPAction", this.urlSoapWS  + "getUnirsePartida");
-        soapMessage.saveChanges();
-        soapMessage.writeTo(System.out);
-        SOAPConnection connection = this.createConnection();
-		SOAPMessage soapResponse = connection.call(soapMessage, this.urlSoapWS);		
-		return this.responseToString(soapResponse);
-	}
+//	public String getUnirsePartida(String dataJuego) throws SOAPException, IOException{
+//		MessageFactory messageFactory = MessageFactory.newInstance();
+//        SOAPMessage soapMessage = messageFactory.createMessage();
+//        SOAPPart soapPart = soapMessage.getSOAPPart();
+//
+//        SOAPEnvelope envelope = soapPart.getEnvelope();
+//        envelope.addNamespaceDeclaration("wservicejuego", "http://logica.servidor");
+//                
+//        SOAPBody soapBody = envelope.getBody();
+//        SOAPElement soapBodyElem = soapBody.addChildElement("getUnirsePartidaRequest", "wservicejuego");
+//        SOAPElement soapBodyElem1 = soapBodyElem.addChildElement("parameters", "wservicejuego"); 
+//        //SOAPElement soapBodyElem2 = soapBodyElem1.addChildElement("dataJuego", "wservicejuego");        
+//        soapBodyElem1.addTextNode(dataJuego);
+//        
+//        MimeHeaders headers = soapMessage.getMimeHeaders();
+//        headers.addHeader("SOAPAction", this.urlSoapWS  + "getUnirsePartida");
+//        soapMessage.saveChanges();
+//        soapMessage.writeTo(System.out);
+//        SOAPConnection connection = this.createConnection();
+//		SOAPMessage soapResponse = connection.call(soapMessage, this.urlSoapWS);		
+//		return this.responseToString(soapResponse);
+//	}
     
 }
