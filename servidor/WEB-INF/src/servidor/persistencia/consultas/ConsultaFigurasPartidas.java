@@ -8,9 +8,8 @@ public class ConsultaFigurasPartidas {
 	}
 	
 	public String insertarFigurasPartidas(){
-		String query = "insert into from figuras_partidas" + 
-						"(id_partida, id_figura, posicion_x, posicion_y, impactos_permitidos,  mangueras, angulo)" +
-						"values(?, ?, ?, ?, ?, ?, ?);";
+		String query = "insert into figuras_partidas set id_partida = ?, id_figura = ?, posicion_x = ?, posicion_y = ?, " +
+					   "impactos_permitidos = ?, mangueras = ?, angulo = ?;";
 		return query;
 	}
 

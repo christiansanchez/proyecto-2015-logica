@@ -7,7 +7,6 @@
 	</messageReceivers>
 	<parameter name="ServiceClass">servidor.logica.FachadaWService</parameter>
 	<operation name="setGuardarPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
-	<operation name="getUnirsePartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
 	<operation name="getCargarPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
 	<operation name="setCargarPartida" mep="http://www.w3.org/2004/08/wsdl/in-out" />
 </service>

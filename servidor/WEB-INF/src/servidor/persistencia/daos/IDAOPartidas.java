@@ -6,6 +6,7 @@ import java.util.List;
 import servidor.excepciones.ActualizarEstadoPartidaException;
 import servidor.excepciones.AgregarPartidaException;
 import servidor.excepciones.BuscarPartidasException;
+import servidor.excepciones.EliminarPartidaException;
 import servidor.excepciones.ExistePartidaEnCursoException;
 import servidor.excepciones.ListarPartidasCreadasException;
 import servidor.persistencia.poolConexiones.IConexion;
@@ -24,6 +25,8 @@ public interface IDAOPartidas {
 	public void updatePartidaEnCursoToCreada(IConexion iConn, String nombrePartida) throws ActualizarEstadoPartidaException;
 	
 	public void updatePartidaEnCursoToTerminada(IConexion iConn, String nombrePartida) throws ActualizarEstadoPartidaException;
+	
+	public void eliminarPartida(IConexion iConn, int idPartida) throws EliminarPartidaException;
 	
 	public VOPartida findPartidaEnCurso(IConexion iConn, String nombrePartida) throws BuscarPartidasException;
 	

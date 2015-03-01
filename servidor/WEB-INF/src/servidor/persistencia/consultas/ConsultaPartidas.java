@@ -38,7 +38,12 @@ public class ConsultaPartidas {
 	}
 	
 	public String agregarPartidaEnCurso(){
-		String query = "insert into partidas values (?, ?, ?);";
+		String query = "insert into partidas set nombre = ?, tipo_mapa = ?, estado = ?;";
+		return query;
+	}
+	
+	public String eliminarPartidaId(){
+		String query = "delete from partidas where id_partida = ?;";
 		return query;
 	}
 }
