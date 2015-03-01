@@ -464,8 +464,20 @@ public class FachadaWSocket{
 			}
 		}
 		nombrePartida = nombrePartida.trim();
-		FachadaSocket isntancia = FachadaSocket.getInstancia();
-		resultado = isntancia.partidas.member(nombrePartida);
+		FachadaSocket instancia = null;		
+		try{
+			instancia = FachadaSocket.getInstancia();
+			instancia.monitorJuego.comenzarLectura();			
+			resultado = instancia.partidas.member(nombrePartida);
+		}
+		catch(MonitorException  e){
+			System.out.println("ERROR MONITOR");
+			resultado = false;
+		} 
+		finally{
+			instancia.monitorJuego.terminarLectura();
+		}
+		
 		return resultado;
 	}
 
