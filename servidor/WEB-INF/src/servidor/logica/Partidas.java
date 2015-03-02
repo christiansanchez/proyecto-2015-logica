@@ -36,7 +36,8 @@ public class Partidas{
 			if (partida.hasCreada()){				
 				partidaStr += "\"nombrePartida\":\"" + partida.getNombre() + "\"," + 
 							  "\"tipoRolDisponible\":\"" + partida.getRolDisponible() + "\"," +
-							  "\"tipoMapa\":\"" + partida.getTipoMapa() + "\";";
+							  "\"tipoMapa\":\"" + partida.getTipoMapa() + "\"," +
+							  "\"status\":\"" + partida.getEstadoPartidaStr() + "\";";
 			}
 			listadoPartidas += partidaStr;
 		}
