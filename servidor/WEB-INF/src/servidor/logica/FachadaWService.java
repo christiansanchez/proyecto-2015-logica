@@ -219,7 +219,7 @@ public class FachadaWService {
 					voManguera1.setPosicionY(0);
 					voManguera1.setAngulo(0);
 
-					voManguera2.setId_figura(1); 
+					voManguera2.setId_figura(2); 
 					voManguera2.setMangueras(Boolean.parseBoolean(manguera2));
 					voManguera2.setId_partida(voPartida.getIdPartida());
 					voManguera2.setImpactosPermitidos(0);
@@ -227,7 +227,7 @@ public class FachadaWService {
 					voManguera2.setPosicionY(0);
 					voManguera2.setAngulo(0);
 
-					voManguera3.setId_figura(1); 
+					voManguera3.setId_figura(3); 
 					voManguera3.setMangueras(Boolean.parseBoolean(manguera3));
 					voManguera3.setId_partida(voPartida.getIdPartida());
 					voManguera3.setImpactosPermitidos(0);
@@ -235,7 +235,7 @@ public class FachadaWService {
 					voManguera3.setPosicionY(0);
 					voManguera3.setAngulo(0);
 
-					voManguera4.setId_figura(1); 
+					voManguera4.setId_figura(4); 
 					voManguera4.setMangueras(Boolean.parseBoolean(manguera4));
 					voManguera4.setId_partida(voPartida.getIdPartida());
 					voManguera4.setImpactosPermitidos(0);
@@ -243,7 +243,7 @@ public class FachadaWService {
 					voManguera4.setPosicionY(0);
 					voManguera4.setAngulo(0);
 
-					voManguera5.setId_figura(1); 
+					voManguera5.setId_figura(5); 
 					voManguera5.setMangueras(Boolean.parseBoolean(manguera5));
 					voManguera5.setId_partida(voPartida.getIdPartida());
 					voManguera5.setImpactosPermitidos(0);
@@ -251,7 +251,7 @@ public class FachadaWService {
 					voManguera5.setPosicionY(0);
 					voManguera5.setAngulo(0);
 
-					voManguera8.setId_figura(1); 
+					voManguera8.setId_figura(8); 
 					voManguera8.setMangueras(Boolean.parseBoolean(manguera8));
 					voManguera8.setId_partida(voPartida.getIdPartida());
 					voManguera8.setImpactosPermitidos(0);
@@ -259,7 +259,7 @@ public class FachadaWService {
 					voManguera8.setPosicionY(0);
 					voManguera8.setAngulo(0);
 
-					voManguera6.setId_figura(1); 
+					voManguera6.setId_figura(6); 
 					voManguera6.setMangueras(Boolean.parseBoolean(manguera6));
 					voManguera6.setId_partida(voPartida.getIdPartida());
 					voManguera6.setImpactosPermitidos(0);
@@ -267,7 +267,7 @@ public class FachadaWService {
 					voManguera6.setPosicionY(0);
 					voManguera6.setAngulo(0);
 
-					voManguera7.setId_figura(1); 
+					voManguera7.setId_figura(7); 
 					voManguera7.setMangueras(Boolean.parseBoolean(manguera7));
 					voManguera7.setId_partida(voPartida.getIdPartida());
 					voManguera7.setImpactosPermitidos(0);
