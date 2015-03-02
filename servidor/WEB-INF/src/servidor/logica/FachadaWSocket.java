@@ -412,6 +412,7 @@ public class FachadaWSocket{
 				String dataJuegoAux = "";
 				if(partida.getEstadoPartida() == estadoTerminada){
 					dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:terminar";
+					//instancia.partidas.delete(nombrePartida);
 				}
 				else if (partida.getEstadoPartida() == estadoEnCurso){					
 					dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:guardar," + dataJuego;
@@ -571,7 +572,8 @@ public class FachadaWSocket{
 				EstadoPartida estadoTerminada = EstadoPartida.TERMINADA;				
 				if(partida.getEstadoPartida() == estadoTerminada){
 					String dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:abandonar";
-					String resultado2 = instancia.webservice.setGuardarPartida(dataJuegoAux);					
+					String resultado2 = instancia.webservice.setGuardarPartida(dataJuegoAux);
+					instancia.partidas.delete(nombrePartida);
 					resultado = Boolean.parseBoolean(resultado2);
 				}
 				else{

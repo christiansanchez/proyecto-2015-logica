@@ -154,10 +154,16 @@ public class FachadaWService {
 		try {			
 			instanciaWS = FachadaService.getInstancia();
 			iConn = instanciaWS.ipool.obtenerConexion(true);
-			if(estado.equals("terminar") && instanciaWS.iPartidas.hasPartidaEnCurso(iConn, nombrePartida)){
+			if(estado.equals("abandonar") && instanciaWS.iPartidas.hasPartidaEnCurso(iConn, nombrePartida)){
 				//si la partida se encuentra en curso en bd, se debe volver a estado creada,
 				//para que pueda volverse a jugar desde el ultimo punto de guardado			
 				instanciaWS.iPartidas.updatePartidaEnCursoToCreada(iConn, nombrePartida);
+				resultado = "true";					
+			}
+			else if(estado.equals("terminar") && instanciaWS.iPartidas.hasPartidaEnCurso(iConn, nombrePartida)){
+				//si la partida se encuentra en curso en bd, se debe pasar a estado tTerminada,
+				//para que pueda volverse a jugar desde el ultimo punto de guardado			
+				instanciaWS.iPartidas.updatePartidaEnCursoToTerminada(iConn, nombrePartida);
 				resultado = "true";					
 			}
 			else if (estado.equals("guardar")){
@@ -284,7 +290,7 @@ public class FachadaWService {
 					voLancha2.setId_figura(11); 
 					voLancha2.setMangueras(false);
 					voLancha2.setId_partida(voPartida.getIdPartida());
-					voLancha2.setImpactosPermitidos(0);							
+					voLancha2.setImpactosPermitidos(Integer.parseInt(energiaLancha2));							
 					voLancha2.setPosicionX(Float.parseFloat(posicionXLancha2));
 		
 					voLancha1.setAngulo(Integer.parseInt(anguloLancha1));
@@ -293,7 +299,7 @@ public class FachadaWService {
 					voLancha1.setId_figura(10); 
 					voLancha1.setMangueras(false);
 					voLancha1.setId_partida(voPartida.getIdPartida());
-					voLancha1.setImpactosPermitidos(0);							
+					voLancha1.setImpactosPermitidos(Integer.parseInt(energiaLancha1));							
 					voLancha1.setPosicionX(Float.parseFloat(posicionXLancha1));	
 			
 					voBarco.setAngulo(Integer.parseInt(anguloBarco));
