@@ -194,24 +194,23 @@ public class FachadaWSocket{
 			}			
 		}		
 		nombrePartida = nombrePartida.trim();
-		if(nombrePartida.isEmpty()){
-			return estado;
-		}
-		FachadaSocket instancia = FachadaSocket.getInstancia();
-		try {
-			instancia.monitorJuego.comenzarLectura();
-			if(instancia.partidas.member(nombrePartida)){
-				estado = instancia.partidas.find(nombrePartida).getEstadoPartidaStr();
-				estado = "\"" + estado + "\"";
+		if(!nombrePartida.isEmpty()){						
+			FachadaSocket instancia = FachadaSocket.getInstancia();
+			try {
+				instancia.monitorJuego.comenzarLectura();
+				if(instancia.partidas.member(nombrePartida)){
+					estado = instancia.partidas.find(nombrePartida).getEstadoPartidaStr();
+					estado = "\"" + estado + "\"";
+				}
 			}
-		}
-		catch (MonitorException e) {	
-			System.out.println("ERRROR MONITOR");
-			estado = "";			
-		}
-		finally{
-			instancia.monitorJuego.terminarLectura();
-			estado = estado.replace(" ", "%20");
+			catch (MonitorException e) {	
+				System.out.println("ERRROR MONITOR");
+				estado = "false,\"error\":\"Error con monitor.\"";		
+			}
+			finally{
+				instancia.monitorJuego.terminarLectura();
+				estado = estado.replace(" ", "%20");
+			}
 		}
 		return estado;
 	}
@@ -239,133 +238,134 @@ public class FachadaWSocket{
 		rolPartida = rolPartida.trim();	
 		tipoMapa = tipoMapa.trim();
 		if(nombrePartida.isEmpty() || rolPartida.isEmpty() || tipoMapa.isEmpty()){
-			return resultado;
+			resultado = "false,\"error\":\"Partida sin nombre, sin rol o sin tipo mapa.\"";
 		}
-		FachadaSocket instancia = FachadaSocket.getInstancia();
-		try {
-			instancia.monitorJuego.comenzarEscritura();
-			resultado = instancia.webservice.setCargarPartida(dataJuego);
-			if(resultado.isEmpty()){
-				return "";
+		else{
+			FachadaSocket instancia = FachadaSocket.getInstancia();
+			try {
+				instancia.monitorJuego.comenzarEscritura();
+				resultado = instancia.webservice.setCargarPartida(dataJuego);
+				if(!resultado.isEmpty()){									
+					TipoMapa mapaElegido;
+					if (tipoMapa.equals("MARABIERTO")){
+						mapaElegido = TipoMapa.MARABIERTO;
+					}
+					else{
+						mapaElegido = TipoMapa.ISLAS;
+					}
+					Mapa mapa = new Mapa(mapaElegido);
+					Partida partidaNueva = null;
+					Barco barco = new Barco();
+					BarcoCarguero barcoCarguero = new BarcoCarguero(barco);				
+					Pirata pirata = new Pirata();
+					Lancha lancha1 = new Lancha();
+					Lancha lancha2 = new Lancha();
+					Lancha lancha3 = new Lancha();
+					String[] partsResultado = resultado.split(";");
+					for(String lineaResultado: partsResultado){
+						String[] lineaValores = lineaResultado.split(",");
+						if (lineaValores.length > 0){
+							for(String lineaResultado2: lineaValores){
+								String[] lineaValores2 = lineaResultado2.split(":");
+								if(lineaValores2[0].equals("posicionXBarco")){
+									(barcoCarguero.getBarco()).setPosicionX(Float.parseFloat(lineaValores2[1]));
+								}
+								else if(lineaValores2[0].equals("posicionYBarco")){
+									(barcoCarguero.getBarco()).setPosicionY(Float.parseFloat(lineaValores2[1]));
+								}
+								else if(lineaValores2[0].equals("anguloBarco")){
+									(barcoCarguero.getBarco()).setAngulo(Integer.parseInt(lineaValores2[1]));
+								}
+								else if(lineaValores2[0].equals("posicionXLancha1")){
+									lancha1.setPosicionX(Float.parseFloat(lineaValores2[1]));
+								}
+								else if(lineaValores2[0].equals("posicionYLancha1")){
+									lancha1.setPosicionY(Float.parseFloat(lineaValores2[1]));
+								}						
+								else if(lineaValores2[0].equals("energiaLancha1")){
+									lancha1.setImpactosPermitidos(Integer.parseInt(lineaValores2[1]));
+								}
+								else if(lineaValores2[0].equals("anguloLancha1")){
+									lancha1.setAngulo(Integer.parseInt(lineaValores2[1]));
+								}												
+								else if(lineaValores2[0].equals("posicionXLancha2")){
+									lancha2.setPosicionX(Float.parseFloat(lineaValores2[1]));
+								}
+								else if(lineaValores2[0].equals("posicionYLancha2")){
+									lancha2.setPosicionY(Float.parseFloat(lineaValores2[1]));
+								}						
+								else if(lineaValores2[0].equals("energiaLancha2")){
+									lancha2.setImpactosPermitidos(Integer.parseInt(lineaValores2[1]));
+								}
+								else if(lineaValores2[0].equals("anguloLancha2")){
+									lancha2.setAngulo(Integer.parseInt(lineaValores2[1]));
+								}																	
+								else if(lineaValores2[0].equals("posicionXLancha3")){
+									lancha3.setPosicionX(Float.parseFloat(lineaValores2[1]));
+								}
+								else if(lineaValores2[0].equals("posicionYLancha3")){
+									lancha3.setPosicionY(Float.parseFloat(lineaValores2[1]));
+								}						
+								else if(lineaValores2[0].equals("energiaLancha3")){
+									lancha3.setImpactosPermitidos(Integer.parseInt(lineaValores2[1]));
+								}
+								else if(lineaValores2[0].equals("anguloLancha1")){
+									lancha1.setAngulo(Integer.parseInt(lineaValores2[1]));
+								}						
+							}
+						}
+						else{
+							String[] lineaValores2 = lineaResultado.split(":");
+							if(lineaValores2[0].equals("manguera1")){
+								(barcoCarguero.getBarco()).setMangueras(1, Boolean.getBoolean(lineaValores2[1]));
+							}
+							else if(lineaValores2[0].equals("manguera2")){
+								(barcoCarguero.getBarco()).setMangueras(2, Boolean.getBoolean(lineaValores2[1]));
+							}
+							else if(lineaValores2[0].equals("manguera3")){
+								(barcoCarguero.getBarco()).setMangueras(3, Boolean.getBoolean(lineaValores2[1]));						
+							}
+							else if(lineaValores2[0].equals("manguera4")){
+								(barcoCarguero.getBarco()).setMangueras(4, Boolean.getBoolean(lineaValores2[1]));
+							}
+							else if(lineaValores2[0].equals("manguera5")){
+								(barcoCarguero.getBarco()).setMangueras(5, Boolean.getBoolean(lineaValores2[1]));	
+							}
+							else if(lineaValores2[0].equals("manguera6")){
+								(barcoCarguero.getBarco()).setMangueras(6, Boolean.getBoolean(lineaValores2[1]));
+							}
+							else if(lineaValores2[0].equals("manguera7")){
+								(barcoCarguero.getBarco()).setMangueras(7, Boolean.getBoolean(lineaValores2[1]));
+							}
+							else if(lineaValores2[0].equals("manguera8")){
+								(barcoCarguero.getBarco()).setMangueras(8, Boolean.getBoolean(lineaValores2[1]));
+							}					
+						}				
+					}
+					pirata.setLancha(1, lancha1);
+					pirata.setLancha(2, lancha2);
+					pirata.setLancha(3, lancha3);
+					Jugador jugador1 = new Jugador(barcoCarguero);
+					Jugador jugador2 = new Jugador(pirata);	
+					partidaNueva = new Partida(nombrePartida, jugador1, jugador2, mapa);
+					EstadoPartida estado = EstadoPartida.CREADA;				
+					partidaNueva.setEstadoPartida(estado);
+					instancia.partidas.insert(partidaNueva);
+				}	
 			}
-			TipoMapa mapaElegido;
-			if (tipoMapa.equals("MARABIERTO")){
-				mapaElegido = TipoMapa.MARABIERTO;
+			catch (SOAPException | IOException e) {
+				System.out.println("ERROR SOAP WEBSERVICE");
+				resultado = "false,\"error\":\"Error con webservice.\"";
 			}
-			else{
-				mapaElegido = TipoMapa.ISLAS;
+			catch (MonitorException e) {	
+				System.out.println("ERRROR MONITOR");
+				resultado = "false,\"error\":\"Error con monitor.\"";			
+			}	
+			finally{
+				instancia.monitorJuego.terminarEscritura();
+				resultado.replace(" ", "%20");
 			}
-			Mapa mapa = new Mapa(mapaElegido);
-			Partida partidaNueva = null;
-			Barco barco = new Barco();
-			BarcoCarguero barcoCarguero = new BarcoCarguero(barco);				
-			Pirata pirata = new Pirata();
-			Lancha lancha1 = new Lancha();
-			Lancha lancha2 = new Lancha();
-			Lancha lancha3 = new Lancha();
-			String[] partsResultado = resultado.split(";");
-			for(String lineaResultado: partsResultado){
-				String[] lineaValores = lineaResultado.split(",");
-				if (lineaValores.length > 0){
-					for(String lineaResultado2: lineaValores){
-						String[] lineaValores2 = lineaResultado2.split(":");
-						if(lineaValores2[0].equals("posicionXBarco")){
-							(barcoCarguero.getBarco()).setPosicionX(Float.parseFloat(lineaValores2[1]));
-						}
-						else if(lineaValores2[0].equals("posicionYBarco")){
-							(barcoCarguero.getBarco()).setPosicionY(Float.parseFloat(lineaValores2[1]));
-						}
-						else if(lineaValores2[0].equals("anguloBarco")){
-							(barcoCarguero.getBarco()).setAngulo(Integer.parseInt(lineaValores2[1]));
-						}
-						else if(lineaValores2[0].equals("posicionXLancha1")){
-							lancha1.setPosicionX(Float.parseFloat(lineaValores2[1]));
-						}
-						else if(lineaValores2[0].equals("posicionYLancha1")){
-							lancha1.setPosicionY(Float.parseFloat(lineaValores2[1]));
-						}						
-						else if(lineaValores2[0].equals("energiaLancha1")){
-							lancha1.setImpactosPermitidos(Integer.parseInt(lineaValores2[1]));
-						}
-						else if(lineaValores2[0].equals("anguloLancha1")){
-							lancha1.setAngulo(Integer.parseInt(lineaValores2[1]));
-						}												
-						else if(lineaValores2[0].equals("posicionXLancha2")){
-							lancha2.setPosicionX(Float.parseFloat(lineaValores2[1]));
-						}
-						else if(lineaValores2[0].equals("posicionYLancha2")){
-							lancha2.setPosicionY(Float.parseFloat(lineaValores2[1]));
-						}						
-						else if(lineaValores2[0].equals("energiaLancha2")){
-							lancha2.setImpactosPermitidos(Integer.parseInt(lineaValores2[1]));
-						}
-						else if(lineaValores2[0].equals("anguloLancha2")){
-							lancha2.setAngulo(Integer.parseInt(lineaValores2[1]));
-						}																	
-						else if(lineaValores2[0].equals("posicionXLancha3")){
-							lancha3.setPosicionX(Float.parseFloat(lineaValores2[1]));
-						}
-						else if(lineaValores2[0].equals("posicionYLancha3")){
-							lancha3.setPosicionY(Float.parseFloat(lineaValores2[1]));
-						}						
-						else if(lineaValores2[0].equals("energiaLancha3")){
-							lancha3.setImpactosPermitidos(Integer.parseInt(lineaValores2[1]));
-						}
-						else if(lineaValores2[0].equals("anguloLancha1")){
-							lancha1.setAngulo(Integer.parseInt(lineaValores2[1]));
-						}						
-					}
-				}
-				else{
-					String[] lineaValores2 = lineaResultado.split(":");
-					if(lineaValores2[0].equals("manguera1")){
-						(barcoCarguero.getBarco()).setMangueras(1, Boolean.getBoolean(lineaValores2[1]));
-					}
-					else if(lineaValores2[0].equals("manguera2")){
-						(barcoCarguero.getBarco()).setMangueras(2, Boolean.getBoolean(lineaValores2[1]));
-					}
-					else if(lineaValores2[0].equals("manguera3")){
-						(barcoCarguero.getBarco()).setMangueras(3, Boolean.getBoolean(lineaValores2[1]));						
-					}
-					else if(lineaValores2[0].equals("manguera4")){
-						(barcoCarguero.getBarco()).setMangueras(4, Boolean.getBoolean(lineaValores2[1]));
-					}
-					else if(lineaValores2[0].equals("manguera5")){
-						(barcoCarguero.getBarco()).setMangueras(5, Boolean.getBoolean(lineaValores2[1]));	
-					}
-					else if(lineaValores2[0].equals("manguera6")){
-						(barcoCarguero.getBarco()).setMangueras(6, Boolean.getBoolean(lineaValores2[1]));
-					}
-					else if(lineaValores2[0].equals("manguera7")){
-						(barcoCarguero.getBarco()).setMangueras(7, Boolean.getBoolean(lineaValores2[1]));
-					}
-					else if(lineaValores2[0].equals("manguera8")){
-						(barcoCarguero.getBarco()).setMangueras(8, Boolean.getBoolean(lineaValores2[1]));
-					}					
-				}				
-			}
-			pirata.setLancha(1, lancha1);
-			pirata.setLancha(2, lancha2);
-			pirata.setLancha(3, lancha3);
-			Jugador jugador1 = new Jugador(barcoCarguero);
-			Jugador jugador2 = new Jugador(pirata);	
-			partidaNueva = new Partida(nombrePartida, jugador1, jugador2, mapa);
-			EstadoPartida estado = EstadoPartida.CREADA;				
-			partidaNueva.setEstadoPartida(estado);
-			instancia.partidas.insert(partidaNueva);
-		}
-		catch (SOAPException | IOException e) {
-			System.out.println("ERROR SOAP WEBSERVICE");
-			resultado = "";	
-		}
-		catch (MonitorException e) {	
-			System.out.println("ERRROR MONITOR");
-			resultado = "";			
-		}	
-		finally{
-			instancia.monitorJuego.terminarEscritura();
-			resultado.replace(" ", "%20");
-		}
+		}		
 		return resultado;
 	}
 	
@@ -378,10 +378,10 @@ public class FachadaWSocket{
 		}
 		catch(MonitorException  e){
 			System.out.println("ERROR MONITOR");
-			resultado = "ERRROR";
+			resultado = "false,\"error\":\"Error con monitor.\"";
 		} catch (SOAPException | IOException e) {
 			System.out.println("ERROR WEB SERVICE");
-			resultado = "ERRROR";
+			resultado = "false,\"error\":\"Error con webservice.\"";
 		}		
 		finally{
 			instancia.monitorJuego.terminarLectura();
@@ -444,7 +444,7 @@ public class FachadaWSocket{
 		}
 		catch(MonitorException  e){
 			System.out.println("ERROR MONITOR");
-			resultado = "false";
+			resultado = "false,\"error\":\"Error con monitor.\"";
 		}
 		finally{
 			instancia.monitorJuego.terminarLectura();
@@ -505,47 +505,49 @@ public class FachadaWSocket{
 		tipoMapa = tipoMapa.trim();
 		rolPartida = rolPartida.trim();
 		if (nombrePartida.isEmpty() || tipoMapa.isEmpty() || rolPartida.isEmpty()){
-			return false;
-		}		
-		isntancia = FachadaSocket.getInstancia();
-		try{			
-			isntancia.monitorJuego.comenzarEscritura();
-			if(!isntancia.partidas.member(nombrePartida)) {
-				TipoMapa mapaElegido;
-				if (tipoMapa.equals("MARABIERTO")){
-					mapaElegido = TipoMapa.MARABIERTO;
-				}
-				else{
-					mapaElegido = TipoMapa.ISLAS;
-				}
-				Mapa mapa = new Mapa(mapaElegido);				
-				Partida partidaNueva = null;
-				Jugador jugador1 = null;
-				Jugador jugador2 = null;
-				if(rolPartida.equals("BARCOCARGUERO")){					
-					Barco barco = new Barco();
-					barco.barcoNuevo();
-					BarcoCarguero barcoCarguero = new BarcoCarguero(barco);
-					jugador1 = new Jugador(barcoCarguero);
-					partidaNueva = new Partida(nombrePartida, jugador1, jugador2, mapa);
-				}
-				else{
-					Pirata pirata = new Pirata();
-					pirata.pirataNuevo();
-					jugador1 = new Jugador(pirata);
-					partidaNueva = new Partida(nombrePartida, jugador2, jugador1, mapa);
-				}
-				isntancia.partidas.insert(partidaNueva);
-				resultado = true;				
-			}			
-		}
-		catch(MonitorException e){
-			System.out.println("ERROR MONITOR");
 			resultado = false;
-		}
-		finally {
-			isntancia.monitorJuego.terminarEscritura();
-        } 
+		}		
+		else{
+			isntancia = FachadaSocket.getInstancia();
+			try{			
+				isntancia.monitorJuego.comenzarEscritura();
+				if(!isntancia.partidas.member(nombrePartida)) {
+					TipoMapa mapaElegido;
+					if (tipoMapa.equals("MARABIERTO")){
+						mapaElegido = TipoMapa.MARABIERTO;
+					}
+					else{
+						mapaElegido = TipoMapa.ISLAS;
+					}
+					Mapa mapa = new Mapa(mapaElegido);				
+					Partida partidaNueva = null;
+					Jugador jugador1 = null;
+					Jugador jugador2 = null;
+					if(rolPartida.equals("BARCOCARGUERO")){					
+						Barco barco = new Barco();
+						barco.barcoNuevo();
+						BarcoCarguero barcoCarguero = new BarcoCarguero(barco);
+						jugador1 = new Jugador(barcoCarguero);
+						partidaNueva = new Partida(nombrePartida, jugador1, jugador2, mapa);
+					}
+					else{
+						Pirata pirata = new Pirata();
+						pirata.pirataNuevo();
+						jugador1 = new Jugador(pirata);
+						partidaNueva = new Partida(nombrePartida, jugador2, jugador1, mapa);
+					}
+					isntancia.partidas.insert(partidaNueva);
+					resultado = true;				
+				}			
+			}
+			catch(MonitorException e){
+				System.out.println("ERROR MONITOR");
+				resultado = false;
+			}
+			finally {
+				isntancia.monitorJuego.terminarEscritura();
+	        } 
+		}				
 		return resultado;
 	}
 	
@@ -701,7 +703,7 @@ public class FachadaWSocket{
 		
 	private String unirsePartida(String dataJuego){
 		dataJuego = dataJuego.replace("\"", "");
-		String resultado = "\"result\":";
+		String resultado = "";
 		String nombrePartida = "";
 		String rolPartida = "";
 		String[] parts = dataJuego.split(",");	    		
@@ -717,52 +719,55 @@ public class FachadaWSocket{
 		nombrePartida = nombrePartida.trim();
 		rolPartida = rolPartida.trim();		
 		if (nombrePartida.isEmpty() || rolPartida.isEmpty()){
-			return resultado + "false,\"error\":\"Partida sin nombre o rol asignado.\"";
+			resultado = "false,\"error\":\"Partida sin nombre o rol asignado.\"";
 		}
-		
-		FachadaSocket instancia = FachadaSocket.getInstancia();
-		try {
-			instancia.monitorJuego.comenzarEscritura();
-			if(!instancia.partidas.member(nombrePartida)) {
-				return resultado + "false,\"error\":\"La partida no existe.\"";
-			}
-			Partida partidaCreada = instancia.partidas.find(nombrePartida);
-			if (partidaCreada.getEstadoPartida() != EstadoPartida.CREADA){
-				return resultado + "false,\"error\":\"La partida ya está en curso.\"";
-			}
-			Jugador jugador2 = null;
-			Jugador jugadorPartida = null;
-			if(rolPartida.equals("BARCOCARGUERO")){											
-				jugadorPartida = partidaCreada.getBarcoCarguero();
-				if(jugadorPartida == null){
-					Barco barco = new Barco();
-					barco.barcoNuevo();
-					BarcoCarguero barcoCarguero = new BarcoCarguero(barco);
-					jugador2 = new Jugador(barcoCarguero);
-					partidaCreada.setBarcoCarguero(jugador2);
+		else{
+			FachadaSocket instancia = FachadaSocket.getInstancia();
+			try {
+				instancia.monitorJuego.comenzarEscritura();
+				if(!instancia.partidas.member(nombrePartida)) {
+					resultado = "false,\"error\":\"La partida no existe.\"";
 				}
-			}
-			else{						
-				jugadorPartida = partidaCreada.getLanchaPirata();
-				if(jugadorPartida == null){
-					Pirata pirata = new Pirata();
-					pirata.pirataNuevo();
-					jugador2 = new Jugador(pirata);
-					partidaCreada.setLanchaPirata(jugador2);							
+				Partida partidaCreada = instancia.partidas.find(nombrePartida);
+				if (partidaCreada.getEstadoPartida() != EstadoPartida.CREADA){
+					resultado =  "false,\"error\":\"La partida ya está en curso.\"";
 				}
+				else{
+					Jugador jugador2 = null;
+					Jugador jugadorPartida = null;
+					if(rolPartida.equals("BARCOCARGUERO")){											
+						jugadorPartida = partidaCreada.getBarcoCarguero();
+						if(jugadorPartida == null){
+							Barco barco = new Barco();
+							barco.barcoNuevo();
+							BarcoCarguero barcoCarguero = new BarcoCarguero(barco);
+							jugador2 = new Jugador(barcoCarguero);
+							partidaCreada.setBarcoCarguero(jugador2);
+						}
+					}
+					else{						
+						jugadorPartida = partidaCreada.getLanchaPirata();
+						if(jugadorPartida == null){
+							Pirata pirata = new Pirata();
+							pirata.pirataNuevo();
+							jugador2 = new Jugador(pirata);
+							partidaCreada.setLanchaPirata(jugador2);							
+						}
+					}
+					EstadoPartida estadoPartida = EstadoPartida.ENCURSO;
+					partidaCreada.setEstadoPartida(estadoPartida);
+					resultado = "\"nombrePartida\":\"" + partidaCreada.getNombre() + "\"," + 
+							  "\"rolPartida\":\"" + rolPartida + "\"," +
+							  "\"tipoMapa\":\"" + partidaCreada.getTipoMapa() + "\"," +
+							  "\"status\":\"" + partidaCreada.getEstadoPartidaStr() + "\";";
+				}									
+			} catch (MonitorException e) {
+				System.out.println("ERROR MONITOR");			 
 			}
-			EstadoPartida estadoPartida = EstadoPartida.ENCURSO;
-			partidaCreada.setEstadoPartida(estadoPartida);
-			resultado = "\"nombrePartida\":\"" + partidaCreada.getNombre() + "\"," + 
-					  "\"rolPartida\":\"" + rolPartida + "\"," +
-					  "\"tipoMapa\":\"" + partidaCreada.getTipoMapa() + "\"," +
-					  "\"status\":\"" + partidaCreada.getEstadoPartidaStr() + "\";";
-		} catch (MonitorException e) {
-			System.out.println("ERROR MONITOR");			 
-		}
-		finally{
-			instancia.monitorJuego.terminarEscritura();
-		}
+			finally{
+				instancia.monitorJuego.terminarEscritura();
+			}
+		}		
 		return resultado;
 	}
 }
