@@ -85,7 +85,7 @@ public class FachadaWSocket{
 			    		String dataJuego = parts[1];	    		
 				    	if(parts2[1].equals("unirse")){	    		
 				    		//cuando el segundo jugador se une a una partida creada o cargada
-			    			boolean result = this.unirsePartida(dataJuego);
+			    			String result = this.unirsePartida(dataJuego);
 			    			String estado = this.estadoPartida(dataJuego);
 			    			resultado += "responseAction:unirse;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 			    			String enviarAMi = "null";
@@ -106,7 +106,7 @@ public class FachadaWSocket{
 				    		resultado += "responseAction:abandonar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 				    		String enviarAMi = "false";
 				    		this.sendMessage(session, resultado, enviarAMi);
-				    	} 		    	
+				    	}		    	
 				    	else if(parts2[1].equals("impactoLancha")){	
 				    		//cuando se produce un impacto en una lancha
 				    		boolean result = this.impactoLancha(dataJuego, session);
@@ -203,7 +203,7 @@ public class FachadaWSocket{
 			if(instancia.partidas.member(nombrePartida)){
 				estado = instancia.partidas.find(nombrePartida).getEstadoPartidaStr();
 				estado = "\"" + estado + "\"";
-			}			
+			}
 		}
 		catch (MonitorException e) {	
 			System.out.println("ERRROR MONITOR");
@@ -414,7 +414,7 @@ public class FachadaWSocket{
 					dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:terminar";
 				}
 				else if (partida.getEstadoPartida() == estadoEnCurso){					
-					dataJuegoAux = "estado:guardar," + dataJuego;
+					dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:guardar," + dataJuego;
 				}
 				String resultado2 = instancia.webservice.setGuardarPartida(dataJuegoAux);			
 				resultado = Boolean.parseBoolean(resultado2);
@@ -699,9 +699,9 @@ public class FachadaWSocket{
 		return resultado;
 	}
 		
-	private boolean unirsePartida(String dataJuego){
+	private String unirsePartida(String dataJuego){
 		dataJuego = dataJuego.replace("\"", "");
-		boolean resultado = false;
+		String resultado = "\"result\":";
 		String nombrePartida = "";
 		String rolPartida = "";
 		String[] parts = dataJuego.split(",");	    		
@@ -717,18 +717,18 @@ public class FachadaWSocket{
 		nombrePartida = nombrePartida.trim();
 		rolPartida = rolPartida.trim();		
 		if (nombrePartida.isEmpty() || rolPartida.isEmpty()){
-			return resultado;
+			return resultado + "false,\"error\":\"Partida sin nombre o rol asignado.\"";
 		}
 		
 		FachadaSocket instancia = FachadaSocket.getInstancia();
 		try {
 			instancia.monitorJuego.comenzarEscritura();
 			if(!instancia.partidas.member(nombrePartida)) {
-				return resultado;
+				return resultado + "false,\"error\":\"La partida no existe.\"";
 			}
 			Partida partidaCreada = instancia.partidas.find(nombrePartida);
 			if (partidaCreada.getEstadoPartida() != EstadoPartida.CREADA){
-				return resultado;
+				return resultado + "false,\"error\":\"La partida ya está en curso.\"";
 			}
 			Jugador jugador2 = null;
 			Jugador jugadorPartida = null;
@@ -753,7 +753,10 @@ public class FachadaWSocket{
 			}
 			EstadoPartida estadoPartida = EstadoPartida.ENCURSO;
 			partidaCreada.setEstadoPartida(estadoPartida);
-			resultado = true;
+			resultado = "\"nombrePartida\":\"" + partidaCreada.getNombre() + "\"," + 
+					  "\"rolPartida\":\"" + rolPartida + "\"," +
+					  "\"tipoMapa\":\"" + partidaCreada.getTipoMapa() + "\"," +
+					  "\"status\":\"" + partidaCreada.getEstadoPartidaStr() + "\";";
 		} catch (MonitorException e) {
 			System.out.println("ERROR MONITOR");			 
 		}
