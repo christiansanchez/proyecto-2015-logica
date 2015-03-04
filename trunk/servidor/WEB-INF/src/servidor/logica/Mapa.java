@@ -1,5 +1,9 @@
 package servidor.logica;
 
+/*
+ * Clase encargada de modelar un mapa para el juego.
+ * */
+
 public class Mapa {
 	
 	private TipoMapa tipoMapa;
