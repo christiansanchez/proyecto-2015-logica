@@ -21,10 +21,6 @@ public class DAOFigurasPartidas implements IDAOFigurasPartidas{
 		this.consultas = new ConsultaFigurasPartidas();			
 	}
 	
-	public boolean member(IConexion iConn){
-		return true;
-	}
-	
 	@Override
 	public List<VOFigurasPartidas> listarFigurasPartidasIdPartida(IConexion iConn, int idP) throws FigurasPartidasIdPartidaException{		
 		try {
