@@ -96,7 +96,7 @@ public class FachadaWSocket{
 				    		boolean result = this.guardarPartida(dataJuego);
 				    		String estado = this.estadoPartida(dataJuego);
 				    		resultado += "responseAction:guardar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-				    		String enviarAMi = "false";
+				    		String enviarAMi = "true";
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}
 				    	else if(parts2[1].equals("abandonar")){	
@@ -104,7 +104,7 @@ public class FachadaWSocket{
 				    		boolean result = this.abandonarPartida(dataJuego);
 				    		String estado = this.estadoPartida(dataJuego);
 				    		resultado += "responseAction:abandonar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-				    		String enviarAMi = "false";
+				    		String enviarAMi = "null";
 				    		this.sendMessage(session, resultado, enviarAMi);
 				    	}		    	
 				    	else if(parts2[1].equals("impactoLancha")){	
