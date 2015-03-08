@@ -18,7 +18,7 @@ public class ConsultaPartidas {
 	}
 	
 	public String existePartidaEnCurso(){
-		String query = "select * from partidas where nombre = ? and estado = 'EnCurso';";
+		String query = "select * from partidas where nombre = ? and estado = 'Creada';";
 		return query;
 	}
 
@@ -28,12 +28,12 @@ public class ConsultaPartidas {
 	}
 	
 	public String updatePartidaEnCursoToTerminada(){
-		String query = "update partidas set estado='Terminada' where nombre = ? and estado='EnCurso'";
+		String query = "update partidas set estado='Terminada' where nombre = ? and estado='Creada'";
 		return query;
 	}
 	
 	public String findPartidasEnCurso(){
-		String query = "select * from partidas where estado = 'EnCurso' and nombre = ?;";
+		String query = "select * from partidas where estado = 'Creada' and nombre = ?;";
 		return query;
 	}
 	

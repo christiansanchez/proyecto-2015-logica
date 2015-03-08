@@ -815,7 +815,7 @@ public class FachadaWSocket{
 					}
 					EstadoPartida estadoPartida = EstadoPartida.ENCURSO;
 					partidaCreada.setEstadoPartida(estadoPartida);
-					resultado = "\"nombrePartida\":\"" + partidaCreada.getNombre() + "\"," + 
+					resultado = "true,\"nombrePartida\":\"" + partidaCreada.getNombre() + "\"," + 
 							"\"rolPartida\":\"" + rolPartida + "\"," +
 							"\"tipoMapa\":\"" + partidaCreada.getTipoMapa() + "\"," +
 							"\"status\":\"" + partidaCreada.getEstadoPartidaStr() + "\";";
