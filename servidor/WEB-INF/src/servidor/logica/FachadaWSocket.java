@@ -96,63 +96,51 @@ public class FachadaWSocket{
 			    		String resultado = "";
 			    		if(!parts[1].isEmpty()){
 				    		String dataJuego = parts[1];	    		
-					    	if(parts2[1].equals("unirse")){	    		
-					    		System.out.println("unirse: " + dataJuego);
+					    	if(parts2[1].equals("unirse")){	    							    		
 					    		//cuando el segundo jugador se une a una partida creada o cargada
 				    			String result = this.unirsePartida(dataJuego);
 				    			//String estado = this.estadoPartida(dataJuego);
-				    			resultado += "responseAction:unirse;\"result\":" + result ;//+ ",\"status\":" + estado + "," + dataJuego;
-				    			System.out.println("unirse => resultado: " + resultado);
+				    			resultado += "responseAction:unirse;\"result\":" + result ;//+ ",\"status\":" + estado + "," + dataJuego;				    			
 				    			String enviarAMi = "null";
 				    			this.sendMessage(session, resultado, enviarAMi);
 					    	}
-					    	else if(parts2[1].equals("guardar")){
-					    		System.out.println("guardar: " + dataJuego);
+					    	else if(parts2[1].equals("guardar")){					    		
 					    		//cuando alguno de los jugadores guarda la partida
 					    		String result = this.guardarPartida(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
-					    		resultado += "responseAction:guardar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-					    		System.out.println("guardar => resultado: " + resultado);
+					    		resultado += "responseAction:guardar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;					    		
 					    		String enviarAMi = "true";
 					    		this.sendMessage(session, resultado, enviarAMi);
 					    	}
-					    	else if(parts2[1].equals("abandonar")){	
-					    		System.out.println("abandonar: " + dataJuego);
+					    	else if(parts2[1].equals("abandonar")){					    		
 					    		//cuando alguno de los jugadores abandona la partida
 					    		String result = this.abandonarPartida(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
-					    		resultado += "responseAction:abandonar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-					    		System.out.println("abandonar => resultado: " + resultado);
+					    		resultado += "responseAction:abandonar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;					    		
 					    		String enviarAMi = "null";
 					    		this.sendMessage(session, resultado, enviarAMi);
 					    	}		    	
-					    	else if(parts2[1].equals("impactoLancha")){	
-					    		System.out.println("impactoLancha: " + dataJuego);
+					    	else if(parts2[1].equals("impactoLancha")){						    		
 					    		//cuando se produce un impacto en una lancha
 					    		String result = this.impactoLancha(dataJuego, session);
 					    		String estado = this.estadoPartida(dataJuego);
 					    		resultado += "responseAction:impactoLancha;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-					    		System.out.println("impactoLancha => resultado: " + resultado);
 					    		String enviarAMi = "false";
 					    		this.sendMessage(session, resultado, enviarAMi);
 					    	}
 					    	else if(parts2[1].equals("impactoBarco")){
-					    		System.out.println("impactoBarco: " + dataJuego);
 					    		//cuando se produce un impacto en una manguera del barco
 					    		String result = this.impactoBarco(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
 					    		resultado += "responseAction:impactoBarco;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-					    		System.out.println("impactoBarco => resultado: " + resultado);
 					    		String enviarAMi = "false";
 					    		this.sendMessage(session, resultado, enviarAMi);
 					    	}
 					    	else if(parts2[1].equals("lanchaDestruida")){
-					    		System.out.println("lanchaDestruida: " + dataJuego);
 					    		//cuando barco choca lancha	y la hunde    		
 					    		String result = this.lanchaDestruida(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
 					    		resultado += "responseAction:lanchaDestruida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-					    		System.out.println("lanchaDestruida => resultado: " + resultado);
 					    		String enviarAMi = "false";
 					    		this.sendMessage(session, resultado, enviarAMi);
 					    	}
@@ -163,51 +151,41 @@ public class FachadaWSocket{
 					    		String enviarAMi = "false";
 					    		this.sendMessage(session, resultado, enviarAMi);
 					    	}
-					    	else if(parts2[1].equals("hasPartida")){	  
-					    		System.out.println("hasPartida: " + dataJuego);
+					    	else if(parts2[1].equals("hasPartida")){	 
 					    		//consulta si la partida esta creada en memoria
 					    		String result = this.hasPartida(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
-					    		resultado += "responseAction:hasPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-					    		System.out.println("hasPartida => resultado: " + resultado);
+					    		resultado += "responseAction:hasPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;					 
 					    		String enviarAMi = "true";
 					    		this.sendMessage(session, resultado, enviarAMi);
 					    	}
-					    	else if(parts2[1].equals("setPartida")){	
-					    		System.out.println("setPartida: " + dataJuego);
+					    	else if(parts2[1].equals("setPartida")){					    		
 					    		//crear una nueva partida ingresando el primer jugador
 					    		String result = this.setPartida(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
 					    		resultado += "responseAction:setPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-					    		System.out.println("setPartida => resultado: " + resultado);
 					    		String enviarAMi = "true";
 					    		this.sendMessage(session, resultado, enviarAMi);
 					    	}
-					    	else if(parts2[1].equals("getUnirsePartida")){	
-					    		System.out.println("getUnirsePartida: " + dataJuego);
+					    	else if(parts2[1].equals("getUnirsePartida")){						    		
 					    		//listado de partidas para poder unirse
 					    		String result = this.getUnirsePartida();
 					    		resultado += "responseAction:getUnirsePartida;\"result\":" + result  + "," + dataJuego;
-					    		System.out.println("getUnirsePartida => resultado: " + resultado);
 					    		String enviarAMi = "true";
 					    		this.sendMessage(session, resultado, enviarAMi);
 					    	}
 					    	else if(parts2[1].equals("getCargarPartida")){	 
-					    		System.out.println("getCargarPartida: " + dataJuego);
 					    		//listado cargado de db para cargar una partida
 					    		String result = this.getCargarPartida();
 					    		resultado += "responseAction:getCargarPartida;\"result\":" + result + "," + dataJuego;
-					    		System.out.println("getCargarPartida => resultado: " + resultado);
 					    		String enviarAMi = "true";
 					    		this.sendMessage(session, resultado, enviarAMi);
 					    	}
 					    	else if(parts2[1].equals("setCargarPartida")){	
-					    		System.out.println("setCargarPartida: " + dataJuego);
 					    		//empezar una partida que estaba guardada
 					    		String result = this.setCargarPartida(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
-					    		resultado += "responseAction:setCargarPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-					    		System.out.println("setCargarPartida => resultado: " + resultado);
+					    		resultado += "responseAction:setCargarPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;				
 					    		String enviarAMi = "true";
 					    		this.sendMessage(session, resultado, enviarAMi);
 					    	}
@@ -629,18 +607,11 @@ public class FachadaWSocket{
 			FachadaSocket instancia = FachadaSocket.getInstancia();
 			try{
 				instancia.monitorJuego.comenzarEscritura();					
-				Partida partida = instancia.partidas.find(nombrePartida);
-				EstadoPartida estadoTerminada = EstadoPartida.TERMINADA;				
-				if(partida.getEstadoPartida() == estadoTerminada){
-					String dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:abandonar";
-					String resultado2 = instancia.webservice.setGuardarPartida(dataJuegoAux);
-					instancia.partidas.delete(nombrePartida);
-					resultado = Boolean.parseBoolean(resultado2);
-				}
-				else{
-					partida.setEstadoPartida(estadoTerminada);
-					resultado = true;
-				}
+				String dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:terminar";
+				String resultado2 = instancia.webservice.setGuardarPartida(dataJuegoAux);
+				instancia.partidas.delete(nombrePartida);
+				resultado = Boolean.parseBoolean(resultado2);
+				resultado = true;
 			}
 			catch(MonitorException e){
 				System.out.println("ERROR MONITOR");
