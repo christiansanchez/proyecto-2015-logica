@@ -109,7 +109,7 @@ public class FachadaWSocket{
 					    	else if(parts2[1].equals("guardar")){
 					    		System.out.println("guardar: " + dataJuego);
 					    		//cuando alguno de los jugadores guarda la partida
-					    		boolean result = this.guardarPartida(dataJuego);
+					    		String result = this.guardarPartida(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
 					    		resultado += "responseAction:guardar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 					    		System.out.println("guardar => resultado: " + resultado);
@@ -119,7 +119,7 @@ public class FachadaWSocket{
 					    	else if(parts2[1].equals("abandonar")){	
 					    		System.out.println("abandonar: " + dataJuego);
 					    		//cuando alguno de los jugadores abandona la partida
-					    		boolean result = this.abandonarPartida(dataJuego);
+					    		String result = this.abandonarPartida(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
 					    		resultado += "responseAction:abandonar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 					    		System.out.println("abandonar => resultado: " + resultado);
@@ -129,7 +129,7 @@ public class FachadaWSocket{
 					    	else if(parts2[1].equals("impactoLancha")){	
 					    		System.out.println("impactoLancha: " + dataJuego);
 					    		//cuando se produce un impacto en una lancha
-					    		boolean result = this.impactoLancha(dataJuego, session);
+					    		String result = this.impactoLancha(dataJuego, session);
 					    		String estado = this.estadoPartida(dataJuego);
 					    		resultado += "responseAction:impactoLancha;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 					    		System.out.println("impactoLancha => resultado: " + resultado);
@@ -139,7 +139,7 @@ public class FachadaWSocket{
 					    	else if(parts2[1].equals("impactoBarco")){
 					    		System.out.println("impactoBarco: " + dataJuego);
 					    		//cuando se produce un impacto en una manguera del barco
-					    		boolean result = this.impactoBarco(dataJuego);
+					    		String result = this.impactoBarco(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
 					    		resultado += "responseAction:impactoBarco;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 					    		System.out.println("impactoBarco => resultado: " + resultado);
@@ -149,7 +149,7 @@ public class FachadaWSocket{
 					    	else if(parts2[1].equals("lanchaDestruida")){
 					    		System.out.println("lanchaDestruida: " + dataJuego);
 					    		//cuando barco choca lancha	y la hunde    		
-					    		boolean result = this.lanchaDestruida(dataJuego);
+					    		String result = this.lanchaDestruida(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
 					    		resultado += "responseAction:lanchaDestruida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 					    		System.out.println("lanchaDestruida => resultado: " + resultado);
@@ -166,7 +166,7 @@ public class FachadaWSocket{
 					    	else if(parts2[1].equals("hasPartida")){	  
 					    		System.out.println("hasPartida: " + dataJuego);
 					    		//consulta si la partida esta creada en memoria
-					    		boolean result = this.hasPartida(dataJuego);
+					    		String result = this.hasPartida(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
 					    		resultado += "responseAction:hasPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 					    		System.out.println("hasPartida => resultado: " + resultado);
@@ -176,7 +176,7 @@ public class FachadaWSocket{
 					    	else if(parts2[1].equals("setPartida")){	
 					    		System.out.println("setPartida: " + dataJuego);
 					    		//crear una nueva partida ingresando el primer jugador
-					    		boolean result = this.setPartida(dataJuego);
+					    		String result = this.setPartida(dataJuego);
 					    		String estado = this.estadoPartida(dataJuego);
 					    		resultado += "responseAction:setPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
 					    		System.out.println("setPartida => resultado: " + resultado);
@@ -436,7 +436,7 @@ public class FachadaWSocket{
 		return resultado;
 	}
 	
-	private boolean guardarPartida(String dataJuego){
+	private String guardarPartida(String dataJuego){
 		dataJuego = dataJuego.replace("\"", "");
 		boolean resultado = false;
 		String nombrePartida = "";
@@ -479,7 +479,12 @@ public class FachadaWSocket{
 				instancia.monitorJuego.terminarEscritura();			
 			}
 		}
-		return resultado;
+		if(resultado){
+			return "true";
+		}
+		else{
+			return "false";
+		}
 	}
 	
 	private String getUnirsePartida(){	
@@ -500,7 +505,7 @@ public class FachadaWSocket{
 		return resultado;	
 	}
 	
-	private boolean hasPartida(String dataJuego){
+	private String hasPartida(String dataJuego){
 		dataJuego = dataJuego.replace("\"", "");
 		boolean resultado = false;
 		String nombrePartida = "";
@@ -525,11 +530,15 @@ public class FachadaWSocket{
 		finally{
 			instancia.monitorJuego.terminarLectura();
 		}
-		
-		return resultado;
+		if(resultado){
+			return "true";			
+		}
+		else{
+			return "false";
+		}
 	}
 
-	private boolean setPartida(String dataJuego){
+	private String setPartida(String dataJuego){
 		dataJuego = dataJuego.replace("\"", "");
 		FachadaSocket isntancia = null;
 		boolean resultado = false;
@@ -595,11 +604,16 @@ public class FachadaWSocket{
 			finally {
 				isntancia.monitorJuego.terminarEscritura();
 	        } 
-		}				
-		return resultado;
+		}			
+		if(resultado){
+			return "true";
+		}
+		else{
+			return "false";
+		}
 	}
 	
-	private boolean abandonarPartida(String dataJuego){
+	private String abandonarPartida(String dataJuego){
 		dataJuego = dataJuego.replace("\"", "");
 		boolean resultado = false;
 		String nombrePartida = "";
@@ -640,10 +654,15 @@ public class FachadaWSocket{
 				instancia.monitorJuego.terminarEscritura();
 			}				
 		}
-		return resultado;
+		if(resultado){
+			return "true";
+		}
+		else{
+			return "false";
+		}
 	}
 	
-	private boolean lanchaDestruida(String dataJuego){
+	private String lanchaDestruida(String dataJuego){
 		dataJuego = dataJuego.replace("\"", "");
 		boolean resultado = false;
 		String nombrePartida = "";
@@ -674,11 +693,16 @@ public class FachadaWSocket{
 			finally{
 				instancia.monitorJuego.terminarEscritura();
 			}
-		}		
-		return resultado;
+		}
+		if(resultado){
+			return "true";
+		}
+		else{
+			return "false";
+		}
 	}
 	
-	private boolean impactoBarco(String dataJuego){
+	private String impactoBarco(String dataJuego){
 		dataJuego = dataJuego.replace("\"", "");
 		boolean resultado = false;
 		String nombrePartida = "";
@@ -711,10 +735,15 @@ public class FachadaWSocket{
 				instancia.monitorJuego.terminarEscritura();
 			}
 		}		
-		return resultado;
+		if(resultado){
+			return "true";
+		}
+		else{
+			return "false";
+		}
 	}
 	
-	private boolean impactoLancha(String dataJuego, Session session){
+	private String impactoLancha(String dataJuego, Session session){
 		dataJuego = dataJuego.replace("\"", "");
 		boolean resultado = false;
 		String nombrePartida = "";
@@ -747,7 +776,12 @@ public class FachadaWSocket{
 				instancia.monitorJuego.terminarEscritura();
 			}
 		}	
-		return resultado;
+		if(resultado){
+			return "true";
+		}
+		else{
+			return "false";
+		}
 	}
 		
 	private String unirsePartida(String dataJuego){
@@ -768,18 +802,18 @@ public class FachadaWSocket{
 		nombrePartida = nombrePartida.trim();
 		rolPartida = rolPartida.trim();		
 		if (nombrePartida.isEmpty() || rolPartida.isEmpty()){
-			resultado = "false,\"error\":\"Partida sin nombre o rol asignado.\"";
+			resultado = "false";
 		}
 		else{
 			FachadaSocket instancia = FachadaSocket.getInstancia();
 			try {
 				instancia.monitorJuego.comenzarEscritura();
 				if(!instancia.partidas.member(nombrePartida)) {
-					resultado = "false,\"error\":\"La partida no existe.\"";
+					resultado = "false";
 				}
 				Partida partidaCreada = instancia.partidas.find(nombrePartida);
 				if (partidaCreada.getEstadoPartida() != EstadoPartida.CREADA){
-					resultado =  "false,\"error\":\"La partida ya está en curso.\"";
+					resultado =  "false";
 				}
 				else{
 					Jugador jugador2 = null;
@@ -849,7 +883,10 @@ public class FachadaWSocket{
 			finally{
 				instancia.monitorJuego.terminarEscritura();
 			}
-		}		
+		}
+		if (resultado.isEmpty()){
+			resultado = "false";
+		}
 		return resultado;
 	}
 }
