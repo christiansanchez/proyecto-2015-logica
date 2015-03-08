@@ -153,14 +153,8 @@ public class FachadaWService {
 		FachadaService instanciaWS = null;
 		try {			
 			instanciaWS = FachadaService.getInstancia();
-			iConn = instanciaWS.ipool.obtenerConexion(true);
-			if(estado.equals("abandonar") && instanciaWS.iPartidas.hasPartidaEnCurso(iConn, nombrePartida)){
-				//si la partida se encuentra en curso en bd, se debe volver a estado creada,
-				//para que pueda volverse a jugar desde el ultimo punto de guardado			
-				instanciaWS.iPartidas.updatePartidaEnCursoToCreada(iConn, nombrePartida);
-				resultado = "true";					
-			}
-			else if(estado.equals("terminar") && instanciaWS.iPartidas.hasPartidaEnCurso(iConn, nombrePartida)){
+			iConn = instanciaWS.ipool.obtenerConexion(true);			
+			if(estado.equals("terminar") && instanciaWS.iPartidas.hasPartidaEnCurso(iConn, nombrePartida)){
 				//si la partida se encuentra en curso en bd, se debe pasar a estado tTerminada,
 				//para que pueda volverse a jugar desde el ultimo punto de guardado			
 				instanciaWS.iPartidas.updatePartidaEnCursoToTerminada(iConn, nombrePartida);

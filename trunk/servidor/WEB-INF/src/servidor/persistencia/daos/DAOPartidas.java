@@ -198,7 +198,7 @@ public class DAOPartidas implements IDAOPartidas{
 			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);
 			String nombrePartida = voPartida.getNombre();
 			String tipoMapa = voPartida.getTipoMapaStrDB();
-			String estadoPartida = voPartida.getEstadoStrDB();
+			String estadoPartida = "Creada";
 			pstmt.setString(1, nombrePartida);
 			pstmt.setString(2, tipoMapa);
 			pstmt.setString(3, estadoPartida);				
