@@ -247,7 +247,7 @@ public class FachadaWSocket{
 			}
 			catch (MonitorException e) {	
 				System.out.println("ERRROR MONITOR");
-				estado = "false,\"error\":\"Error con monitor.\"";		
+				estado = "false";		
 			}
 			finally{
 				instancia.monitorJuego.terminarLectura();
@@ -280,7 +280,7 @@ public class FachadaWSocket{
 		rolPartida = rolPartida.trim();	
 		tipoMapa = tipoMapa.trim();
 		if(nombrePartida.isEmpty() || rolPartida.isEmpty() || tipoMapa.isEmpty()){
-			resultado = "false,\"error\":\"Partida sin nombre, sin rol o sin tipo mapa.\"";
+			resultado = "false";
 		}
 		else{
 			FachadaSocket instancia = FachadaSocket.getInstancia();
@@ -402,11 +402,11 @@ public class FachadaWSocket{
 			}
 			catch (SOAPException | IOException e) {
 				System.out.println("ERROR SOAP WEBSERVICE");
-				resultado = "false,\"error\":\"Error con webservice.\"";
+				resultado = "false";
 			}
 			catch (MonitorException e) {	
 				System.out.println("ERRROR MONITOR");
-				resultado = "false,\"error\":\"Error con monitor.\"";			
+				resultado = "false";			
 			}	
 			finally{
 				instancia.monitorJuego.terminarEscritura();
@@ -425,10 +425,10 @@ public class FachadaWSocket{
 		}
 		catch(MonitorException  e){
 			System.out.println("ERROR MONITOR");
-			resultado = "false,\"error\":\"Error con monitor.\"";
+			resultado = "false";
 		} catch (SOAPException | IOException e) {
 			System.out.println("ERROR WEB SERVICE");
-			resultado = "false,\"error\":\"Error con webservice.\"";
+			resultado = "false";
 		}		
 		finally{
 			instancia.monitorJuego.terminarLectura();
@@ -497,7 +497,7 @@ public class FachadaWSocket{
 		}
 		catch(MonitorException  e){
 			System.out.println("ERROR MONITOR");
-			resultado = "false,\"error\":\"Error con monitor.\"";
+			resultado = "false";
 		}
 		finally{
 			instancia.monitorJuego.terminarLectura();
