@@ -66,6 +66,7 @@ public class FachadaWSocket{
 			}
 			if (enviar){
 				try {
+					System.out.println(resultado);
 					client.getBasicRemote().sendText(resultado);
 				}
 				catch (IOException e) {
@@ -113,9 +114,9 @@ public class FachadaWSocket{
 					    		this.sendMessage(session, resultado, enviarAMi);
 					    	}
 					    	else if(parts2[1].equals("abandonar")){					    		
-					    		//cuando alguno de los jugadores abandona la partida
+					    		//cuando alguno de los jugadores abandona la partida					    		
 					    		String result = this.abandonarPartida(dataJuego);
-					    		String estado = this.estadoPartida(dataJuego);
+					    		String estado = "\"TERMINADA\"";
 					    		resultado += "responseAction:abandonar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;					    		
 					    		String enviarAMi = "null";
 					    		this.sendMessage(session, resultado, enviarAMi);
