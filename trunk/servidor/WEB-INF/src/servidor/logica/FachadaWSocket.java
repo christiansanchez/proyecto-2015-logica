@@ -32,7 +32,10 @@ public class FachadaWSocket{
 	
 	@OnOpen
 	public void onOpen (Session session) {
-		clients.add(session);
+		//solo permito 2 clientes conectados al servidor a la vez
+		if (clients.size() == 0 || clients.size() == 1){
+			clients.add(session);
+		}		
 	}
 
 	@OnClose
@@ -42,7 +45,7 @@ public class FachadaWSocket{
 	
 	@OnError
     public void onError(Throwable t) {
-        t.printStackTrace();
+        //t.printStackTrace();
     }
 	
 	private void sendMessage(Session session, String resultado, String aMiMismo){
@@ -72,135 +75,152 @@ public class FachadaWSocket{
 		}
 	}	
 	
+	private boolean hasCliente(Session clientEntrante){		
+		for(Session client : clients){
+			if (client.equals(clientEntrante)){
+				return true;
+			}
+		}						
+		return false;
+	}
+	
 	@OnMessage
 	public void onMessage(String message, Session session){	    
 		//metodo encargado de recibir los mensajes desde la capa de presentacion
 	    synchronized(clients){	    	
-	    	String[] parts = message.split(";");
-	    	if(parts.length > 1){
-	    		String[] parts2 = parts[0].split(":");
-		    	if (parts2[0].equals("requestAction")){
-		    		String resultado = "";
-		    		if(!parts[1].isEmpty()){
-			    		String dataJuego = parts[1];	    		
-				    	if(parts2[1].equals("unirse")){	    		
-				    		System.out.println("unirse: " + dataJuego);
-				    		//cuando el segundo jugador se une a una partida creada o cargada
-			    			String result = this.unirsePartida(dataJuego);
-			    			//String estado = this.estadoPartida(dataJuego);
-			    			resultado += "responseAction:unirse;\"result\":" + result ;//+ ",\"status\":" + estado + "," + dataJuego;
-			    			System.out.println("unirse => resultado: " + resultado);
-			    			String enviarAMi = "false";
-			    			this.sendMessage(session, resultado, enviarAMi);
-				    	}
-				    	else if(parts2[1].equals("guardar")){
-				    		System.out.println("guardar: " + dataJuego);
-				    		//cuando alguno de los jugadores guarda la partida
-				    		boolean result = this.guardarPartida(dataJuego);
-				    		String estado = this.estadoPartida(dataJuego);
-				    		resultado += "responseAction:guardar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-				    		System.out.println("guardar => resultado: " + resultado);
-				    		String enviarAMi = "true";
-				    		this.sendMessage(session, resultado, enviarAMi);
-				    	}
-				    	else if(parts2[1].equals("abandonar")){	
-				    		System.out.println("abandonar: " + dataJuego);
-				    		//cuando alguno de los jugadores abandona la partida
-				    		boolean result = this.abandonarPartida(dataJuego);
-				    		String estado = this.estadoPartida(dataJuego);
-				    		resultado += "responseAction:abandonar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-				    		System.out.println("abandonar => resultado: " + resultado);
-				    		String enviarAMi = "null";
-				    		this.sendMessage(session, resultado, enviarAMi);
-				    	}		    	
-				    	else if(parts2[1].equals("impactoLancha")){	
-				    		System.out.println("impactoLancha: " + dataJuego);
-				    		//cuando se produce un impacto en una lancha
-				    		boolean result = this.impactoLancha(dataJuego, session);
-				    		String estado = this.estadoPartida(dataJuego);
-				    		resultado += "responseAction:impactoLancha;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-				    		System.out.println("impactoLancha => resultado: " + resultado);
-				    		String enviarAMi = "false";
-				    		this.sendMessage(session, resultado, enviarAMi);
-				    	}
-				    	else if(parts2[1].equals("impactoBarco")){
-				    		System.out.println("impactoBarco: " + dataJuego);
-				    		//cuando se produce un impacto en una manguera del barco
-				    		boolean result = this.impactoBarco(dataJuego);
-				    		String estado = this.estadoPartida(dataJuego);
-				    		resultado += "responseAction:impactoBarco;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-				    		System.out.println("impactoBarco => resultado: " + resultado);
-				    		String enviarAMi = "false";
-				    		this.sendMessage(session, resultado, enviarAMi);
-				    	}
-				    	else if(parts2[1].equals("lanchaDestruida")){
-				    		System.out.println("lanchaDestruida: " + dataJuego);
-				    		//cuando barco choca lancha	y la hunde    		
-				    		boolean result = this.lanchaDestruida(dataJuego);
-				    		String estado = this.estadoPartida(dataJuego);
-				    		resultado += "responseAction:lanchaDestruida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-				    		System.out.println("lanchaDestruida => resultado: " + resultado);
-				    		String enviarAMi = "false";
-				    		this.sendMessage(session, resultado, enviarAMi);
-				    	}
-				    	else if(parts2[1].equals("dibujar")){	
-				    		//utilizado para la sincronizacion		
-				    		String estado = this.estadoPartida(dataJuego);
-				    		resultado += "responseAction:dibujar;\"status\":" + estado + "," + dataJuego;
-				    		String enviarAMi = "false";
-				    		this.sendMessage(session, resultado, enviarAMi);
-				    	}
-				    	else if(parts2[1].equals("hasPartida")){	  
-				    		System.out.println("hasPartida: " + dataJuego);
-				    		//consulta si la partida esta creada en memoria
-				    		boolean result = this.hasPartida(dataJuego);
-				    		String estado = this.estadoPartida(dataJuego);
-				    		resultado += "responseAction:hasPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-				    		System.out.println("hasPartida => resultado: " + resultado);
-				    		String enviarAMi = "true";
-				    		this.sendMessage(session, resultado, enviarAMi);
-				    	}
-				    	else if(parts2[1].equals("setPartida")){	
-				    		System.out.println("setPartida: " + dataJuego);
-				    		//crear una nueva partida ingresando el primer jugador
-				    		boolean result = this.setPartida(dataJuego);
-				    		String estado = this.estadoPartida(dataJuego);
-				    		resultado += "responseAction:setPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-				    		System.out.println("setPartida => resultado: " + resultado);
-				    		String enviarAMi = "true";
-				    		this.sendMessage(session, resultado, enviarAMi);
-				    	}
-				    	else if(parts2[1].equals("getUnirsePartida")){	
-				    		System.out.println("getUnirsePartida: " + dataJuego);
-				    		//listado de partidas para poder unirse
-				    		String result = this.getUnirsePartida();
-				    		resultado += "responseAction:getUnirsePartida;\"result\":" + result  + "," + dataJuego;
-				    		System.out.println("getUnirsePartida => resultado: " + resultado);
-				    		String enviarAMi = "true";
-				    		this.sendMessage(session, resultado, enviarAMi);
-				    	}
-				    	else if(parts2[1].equals("getCargarPartida")){	 
-				    		System.out.println("getCargarPartida: " + dataJuego);
-				    		//listado cargado de db para cargar una partida
-				    		String result = this.getCargarPartida();
-				    		resultado += "responseAction:getCargarPartida;\"result\":" + result + "," + dataJuego;
-				    		System.out.println("getCargarPartida => resultado: " + resultado);
-				    		String enviarAMi = "true";
-				    		this.sendMessage(session, resultado, enviarAMi);
-				    	}
-				    	else if(parts2[1].equals("setCargarPartida")){	
-				    		System.out.println("setCargarPartida: " + dataJuego);
-				    		//empezar una partida que estaba guardada
-				    		String result = this.setCargarPartida(dataJuego);
-				    		String estado = this.estadoPartida(dataJuego);
-				    		resultado += "responseAction:setCargarPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
-				    		System.out.println("setCargarPartida => resultado: " + resultado);
-				    		String enviarAMi = "true";
-				    		this.sendMessage(session, resultado, enviarAMi);
-				    	}
-		    		}	
-		    	}
-	    	}	    	
+	    	if (this.hasCliente(session)){
+		    	String[] parts = message.split(";");
+		    	if(parts.length > 1){
+		    		String[] parts2 = parts[0].split(":");
+			    	if (parts2[0].equals("requestAction")){
+			    		String resultado = "";
+			    		if(!parts[1].isEmpty()){
+				    		String dataJuego = parts[1];	    		
+					    	if(parts2[1].equals("unirse")){	    		
+					    		System.out.println("unirse: " + dataJuego);
+					    		//cuando el segundo jugador se une a una partida creada o cargada
+				    			String result = this.unirsePartida(dataJuego);
+				    			//String estado = this.estadoPartida(dataJuego);
+				    			resultado += "responseAction:unirse;\"result\":" + result ;//+ ",\"status\":" + estado + "," + dataJuego;
+				    			System.out.println("unirse => resultado: " + resultado);
+				    			String enviarAMi = "null";
+				    			this.sendMessage(session, resultado, enviarAMi);
+					    	}
+					    	else if(parts2[1].equals("guardar")){
+					    		System.out.println("guardar: " + dataJuego);
+					    		//cuando alguno de los jugadores guarda la partida
+					    		boolean result = this.guardarPartida(dataJuego);
+					    		String estado = this.estadoPartida(dataJuego);
+					    		resultado += "responseAction:guardar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
+					    		System.out.println("guardar => resultado: " + resultado);
+					    		String enviarAMi = "true";
+					    		this.sendMessage(session, resultado, enviarAMi);
+					    	}
+					    	else if(parts2[1].equals("abandonar")){	
+					    		System.out.println("abandonar: " + dataJuego);
+					    		//cuando alguno de los jugadores abandona la partida
+					    		boolean result = this.abandonarPartida(dataJuego);
+					    		String estado = this.estadoPartida(dataJuego);
+					    		resultado += "responseAction:abandonar;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
+					    		System.out.println("abandonar => resultado: " + resultado);
+					    		String enviarAMi = "null";
+					    		this.sendMessage(session, resultado, enviarAMi);
+					    	}		    	
+					    	else if(parts2[1].equals("impactoLancha")){	
+					    		System.out.println("impactoLancha: " + dataJuego);
+					    		//cuando se produce un impacto en una lancha
+					    		boolean result = this.impactoLancha(dataJuego, session);
+					    		String estado = this.estadoPartida(dataJuego);
+					    		resultado += "responseAction:impactoLancha;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
+					    		System.out.println("impactoLancha => resultado: " + resultado);
+					    		String enviarAMi = "false";
+					    		this.sendMessage(session, resultado, enviarAMi);
+					    	}
+					    	else if(parts2[1].equals("impactoBarco")){
+					    		System.out.println("impactoBarco: " + dataJuego);
+					    		//cuando se produce un impacto en una manguera del barco
+					    		boolean result = this.impactoBarco(dataJuego);
+					    		String estado = this.estadoPartida(dataJuego);
+					    		resultado += "responseAction:impactoBarco;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
+					    		System.out.println("impactoBarco => resultado: " + resultado);
+					    		String enviarAMi = "false";
+					    		this.sendMessage(session, resultado, enviarAMi);
+					    	}
+					    	else if(parts2[1].equals("lanchaDestruida")){
+					    		System.out.println("lanchaDestruida: " + dataJuego);
+					    		//cuando barco choca lancha	y la hunde    		
+					    		boolean result = this.lanchaDestruida(dataJuego);
+					    		String estado = this.estadoPartida(dataJuego);
+					    		resultado += "responseAction:lanchaDestruida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
+					    		System.out.println("lanchaDestruida => resultado: " + resultado);
+					    		String enviarAMi = "false";
+					    		this.sendMessage(session, resultado, enviarAMi);
+					    	}
+					    	else if(parts2[1].equals("dibujar")){	
+					    		//utilizado para la sincronizacion		
+					    		String estado = this.estadoPartida(dataJuego);
+					    		resultado += "responseAction:dibujar;\"status\":" + estado + "," + dataJuego;
+					    		String enviarAMi = "false";
+					    		this.sendMessage(session, resultado, enviarAMi);
+					    	}
+					    	else if(parts2[1].equals("hasPartida")){	  
+					    		System.out.println("hasPartida: " + dataJuego);
+					    		//consulta si la partida esta creada en memoria
+					    		boolean result = this.hasPartida(dataJuego);
+					    		String estado = this.estadoPartida(dataJuego);
+					    		resultado += "responseAction:hasPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
+					    		System.out.println("hasPartida => resultado: " + resultado);
+					    		String enviarAMi = "true";
+					    		this.sendMessage(session, resultado, enviarAMi);
+					    	}
+					    	else if(parts2[1].equals("setPartida")){	
+					    		System.out.println("setPartida: " + dataJuego);
+					    		//crear una nueva partida ingresando el primer jugador
+					    		boolean result = this.setPartida(dataJuego);
+					    		String estado = this.estadoPartida(dataJuego);
+					    		resultado += "responseAction:setPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
+					    		System.out.println("setPartida => resultado: " + resultado);
+					    		String enviarAMi = "true";
+					    		this.sendMessage(session, resultado, enviarAMi);
+					    	}
+					    	else if(parts2[1].equals("getUnirsePartida")){	
+					    		System.out.println("getUnirsePartida: " + dataJuego);
+					    		//listado de partidas para poder unirse
+					    		String result = this.getUnirsePartida();
+					    		resultado += "responseAction:getUnirsePartida;\"result\":" + result  + "," + dataJuego;
+					    		System.out.println("getUnirsePartida => resultado: " + resultado);
+					    		String enviarAMi = "true";
+					    		this.sendMessage(session, resultado, enviarAMi);
+					    	}
+					    	else if(parts2[1].equals("getCargarPartida")){	 
+					    		System.out.println("getCargarPartida: " + dataJuego);
+					    		//listado cargado de db para cargar una partida
+					    		String result = this.getCargarPartida();
+					    		resultado += "responseAction:getCargarPartida;\"result\":" + result + "," + dataJuego;
+					    		System.out.println("getCargarPartida => resultado: " + resultado);
+					    		String enviarAMi = "true";
+					    		this.sendMessage(session, resultado, enviarAMi);
+					    	}
+					    	else if(parts2[1].equals("setCargarPartida")){	
+					    		System.out.println("setCargarPartida: " + dataJuego);
+					    		//empezar una partida que estaba guardada
+					    		String result = this.setCargarPartida(dataJuego);
+					    		String estado = this.estadoPartida(dataJuego);
+					    		resultado += "responseAction:setCargarPartida;\"result\":" + result + ",\"status\":" + estado + "," + dataJuego;
+					    		System.out.println("setCargarPartida => resultado: " + resultado);
+					    		String enviarAMi = "true";
+					    		this.sendMessage(session, resultado, enviarAMi);
+					    	}
+			    		}	
+			    	}
+		    	}	
+	    	}
+	    	else{
+	    		if (clients.size() == 0 || clients.size() == 1){
+	    			this.onOpen(session);
+	    			this.onMessage(message, session);
+	    		}
+	    	}
 	    }
 	}
 	
