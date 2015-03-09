@@ -25,6 +25,11 @@ import servidor.excepciones.MonitorException;
 public class FachadaWSocket{
 	
 	private static Set<Session> clients = Collections.synchronizedSet(new HashSet<Session>());
+	private String auxNombrePartida = "";
+	private static Session cliente1 = null;
+	private static String tipo1 = "";
+	private static Session cliente2 = null;
+	private static String tipo2 = "";
 	
 	public FachadaWSocket(){
 		FachadaSocket.getInstancia();
@@ -33,20 +38,34 @@ public class FachadaWSocket{
 	@OnOpen
 	public void onOpen (Session session) {
 		//solo permito 2 clientes conectados al servidor a la vez
-		if (clients.size() == 0 || clients.size() == 1){
+		if (clients.size() == 0 || clients.size() == 1){			
+			if(cliente1 == null){
+				cliente1 = session;
+			}
+			else{
+				cliente2 = session;
+			}				
 			clients.add(session);
 		}		
 	}
 
 	@OnClose
 	public void onClose (Session session) {
-	    clients.remove(session);
+		if(cliente1 != null && cliente1.equals(session)){
+			cliente1 = null;
+			tipo1 = "";			
+			this.hiloAbandonar();
+		}
+		else if(cliente2 != null && cliente2.equals(session)){
+			cliente2 = null;
+			tipo2 = "";			
+		    this.hiloAbandonar();
+		}
+		clients.remove(session);
 	}
 	
 	@OnError
-    public void onError(Throwable t) {
-        //t.printStackTrace();
-    }
+    public void onError(Throwable t) {}
 	
 	private void sendMessage(Session session, String resultado, String aMiMismo){
 		//metodo encargado de enviar mensajes a los clientes conectados
@@ -85,6 +104,57 @@ public class FachadaWSocket{
 		return false;
 	}
 	
+	private void hiloAbandonar(){
+		String nombrePartida = this.auxNombrePartida;
+		boolean mandarMsj = false;
+		if(!nombrePartida.isEmpty()){
+			FachadaSocket instancia = FachadaSocket.getInstancia();
+			try{
+				instancia.monitorJuego.comenzarEscritura();
+				EstadoPartida estadoEnCurso = EstadoPartida.ENCURSO;
+				if(instancia.partidas.member(nombrePartida)){
+					Partida partidaActual = instancia.partidas.find(nombrePartida);
+					EstadoPartida estadoActual = partidaActual.getEstadoPartida();
+					if(estadoActual == estadoEnCurso){
+						instancia.partidas.delete(nombrePartida);
+						String dataJuegoAux = "nombrePartida:" + nombrePartida + ",estado:hiloAbandonar";						
+						String resultado2 = instancia.webservice.setGuardarPartida(dataJuegoAux);
+						mandarMsj = true;
+						this.auxNombrePartida = resultado2;
+						this.auxNombrePartida = "";
+					}
+				}				
+			}
+			catch(MonitorException | SOAPException | IOException e){
+				System.out.println("ERROR MONITOR");				
+			}
+			finally{
+				instancia.monitorJuego.terminarEscritura();
+				if(mandarMsj){
+					String message = "responseAction:abandonar;\"result\":\"true\",\"status\":\"TERMINADA\",\"nombrePartida\":\"" + this.auxNombrePartida + "\",\"endMatch\":\"true\",\"winner\":\"freightboat\"";										
+					if(cliente1 == null){
+						if (tipo2.equals("PIRATA")){
+							message = message.replace("freightboat", "speedboat");
+							this.sendMessage(cliente2, message, "true");
+						}
+						else{
+							this.sendMessage(cliente2, message, "true");
+						}
+					}
+					else{
+						if (tipo1.equals("PIRATA")){
+							message = message.replace("freightboat", "speedboat");
+							this.sendMessage(cliente1, message, "true");
+						}
+						else{
+							this.sendMessage(cliente1, message, "true");
+						}
+					}					
+				}				
+			}				
+		}		
+	}
+	
 	@OnMessage
 	public void onMessage(String message, Session session){	    
 		//metodo encargado de recibir los mensajes desde la capa de presentacion
@@ -99,11 +169,11 @@ public class FachadaWSocket{
 				    		String dataJuego = parts[1];	    		
 					    	if(parts2[1].equals("unirse")){	    							    		
 					    		//cuando el segundo jugador se une a una partida creada o cargada
-				    			String result = this.unirsePartida(dataJuego);
+				    			String result = this.unirsePartida(dataJuego, session);
 				    			//String estado = this.estadoPartida(dataJuego);
 				    			resultado += "responseAction:unirse;\"result\":" + result ;//+ ",\"status\":" + estado + "," + dataJuego;				    			
 				    			String enviarAMi = "null";
-				    			this.sendMessage(session, resultado, enviarAMi);
+				    			this.sendMessage(session, resultado, enviarAMi);				    		
 					    	}
 					    	else if(parts2[1].equals("guardar")){					    		
 					    		//cuando alguno de los jugadores guarda la partida
@@ -377,6 +447,7 @@ public class FachadaWSocket{
 					EstadoPartida estado = EstadoPartida.CREADA;				
 					partidaNueva.setEstadoPartida(estado);
 					instancia.partidas.insert(partidaNueva);
+					this.auxNombrePartida = nombrePartida;
 				}	
 			}
 			catch (SOAPException | IOException e) {
@@ -445,6 +516,7 @@ public class FachadaWSocket{
 				}
 				String resultado2 = instancia.webservice.setGuardarPartida(dataJuegoAux);			
 				resultado = Boolean.parseBoolean(resultado2);
+				this.auxNombrePartida = nombrePartida;
 			}
 			catch (MonitorException e) {
 				System.out.println("ERROR MONITOR");
@@ -573,6 +645,7 @@ public class FachadaWSocket{
 						partidaNueva = new Partida(nombrePartida, jugador2, jugador1, mapa);
 					}
 					isntancia.partidas.insert(partidaNueva);
+					this.auxNombrePartida = nombrePartida;
 					resultado = true;				
 				}			
 			}
@@ -613,6 +686,7 @@ public class FachadaWSocket{
 				instancia.partidas.delete(nombrePartida);
 				resultado = Boolean.parseBoolean(resultado2);
 				resultado = true;
+				this.auxNombrePartida = nombrePartida;
 			}
 			catch(MonitorException e){
 				System.out.println("ERROR MONITOR");
@@ -756,7 +830,7 @@ public class FachadaWSocket{
 		}
 	}
 		
-	private String unirsePartida(String dataJuego){
+	private String unirsePartida(String dataJuego, Session session){
 		dataJuego = dataJuego.replace("\"", "");
 		String resultado = "";
 		String nombrePartida = "";
@@ -803,6 +877,14 @@ public class FachadaWSocket{
 							jugador2 = new Jugador(barcoCarguero);
 							partidaCreada.setBarcoCarguero(jugador2);
 						}
+						if(cliente1.equals(session)){
+							tipo1 = "BARCOCARGUERO";
+							tipo2 = "PIRATA";
+						}
+						else{
+							tipo2 = "BARCOCARGUERO";
+							tipo1 = "PIRATA";
+						}
 					}
 					else{						
 						jugadorPartida = partidaCreada.getLanchaPirata();
@@ -812,9 +894,18 @@ public class FachadaWSocket{
 							jugador2 = new Jugador(pirata);
 							partidaCreada.setLanchaPirata(jugador2);							
 						}
+						if(cliente1.equals(session)){
+							tipo2 = "BARCOCARGUERO";
+							tipo1 = "PIRATA";
+						}
+						else{
+							tipo1 = "BARCOCARGUERO";
+							tipo2 = "PIRATA";
+						}
 					}
 					EstadoPartida estadoPartida = EstadoPartida.ENCURSO;
 					partidaCreada.setEstadoPartida(estadoPartida);
+					this.auxNombrePartida = nombrePartida;
 					resultado = "true,\"nombrePartida\":\"" + partidaCreada.getNombre() + "\"," + 
 							"\"rolPartida\":\"" + rolPartida + "\"," +
 							"\"tipoMapa\":\"" + partidaCreada.getTipoMapa() + "\"," +

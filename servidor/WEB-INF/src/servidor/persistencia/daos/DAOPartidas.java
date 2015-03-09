@@ -110,6 +110,28 @@ public class DAOPartidas implements IDAOPartidas{
 	}
 	
 	@Override
+	public boolean hasPartidaCreada(IConexion iConn, String nombrePartida) throws ExistePartidaEnCursoException{
+		try {							
+			boolean resultado = false;
+			String query = this.consultas.findPartidasNombre();
+			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);
+			pstmt.setString(1, nombrePartida);			
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next())
+			{
+				resultado = true;
+			}			
+			pstmt.close();
+			return resultado;
+			
+		}	
+		catch(SQLException e){
+			throw new ExistePartidaEnCursoException();
+		}
+	}
+	
+	
+	@Override
 	public boolean hasPartidaEnCurso(IConexion iConn, String nombrePartida) throws ExistePartidaEnCursoException{
 		try {							
 			boolean resultado = false;
@@ -162,6 +184,39 @@ public class DAOPartidas implements IDAOPartidas{
 	public VOPartida findPartidaEnCurso(IConexion iConn, String nombrePartida) throws BuscarPartidasException{
 		try {			
 			String query = this.consultas.findPartidasEnCurso();
+			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);
+			pstmt.setString(1, nombrePartida);		
+			ResultSet rs = pstmt.executeQuery();			
+			VOPartida voPartida = null;
+			if (rs.next())
+			{
+				int idPartida = rs.getInt("id_partida");
+				String nombre = rs.getString("nombre");				
+				voPartida = new VOPartida(idPartida, nombre);
+				String tipoMapaStr = rs.getString("tipo_mapa");
+				TipoMapa tipoMapa;
+				if (tipoMapaStr.equals("Islas")){
+					tipoMapa = TipoMapa.ISLAS;
+				}
+				else{
+					tipoMapa = TipoMapa.MARABIERTO;
+				}
+				Mapa mapa = new Mapa(tipoMapa);
+				voPartida.setMapa(mapa);
+			}
+			rs.close();
+			pstmt.close();
+			return voPartida;				
+		}	
+		catch(SQLException e){
+			throw new BuscarPartidasException();
+		}	
+	}
+	
+	@Override
+	public VOPartida findPartidaCreada(IConexion iConn, String nombrePartida) throws BuscarPartidasException{
+		try {			
+			String query = this.consultas.findPartidasNombre();
 			PreparedStatement pstmt = ((Conexion)iConn).getConnection().prepareStatement(query);
 			pstmt.setString(1, nombrePartida);		
 			ResultSet rs = pstmt.executeQuery();			

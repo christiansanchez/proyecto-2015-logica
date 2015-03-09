@@ -154,7 +154,11 @@ public class FachadaWService {
 		try {			
 			instanciaWS = FachadaService.getInstancia();
 			iConn = instanciaWS.ipool.obtenerConexion(true);			
-			if(estado.equals("terminar") && instanciaWS.iPartidas.hasPartidaEnCurso(iConn, nombrePartida)){
+			if(estado.equals("hiloAbandonar") && instanciaWS.iPartidas.hasPartidaEnCurso(iConn, nombrePartida)){
+				instanciaWS.iPartidas.updatePartidaEnCursoToCreada(iConn, nombrePartida);
+				resultado = "true";	
+			}			
+			else if(estado.equals("terminar") && instanciaWS.iPartidas.hasPartidaCreada(iConn, nombrePartida)){
 				//si la partida se encuentra en curso en bd, se debe pasar a estado tTerminada,
 				//para que pueda volverse a jugar desde el ultimo punto de guardado			
 				instanciaWS.iPartidas.updatePartidaEnCursoToTerminada(iConn, nombrePartida);
@@ -190,7 +194,7 @@ public class FachadaWService {
 					}					
 					//Hay que guardar las figuras de la partida porque estan jugando y
 					//uno de los jugadores dicidio guardar
-					VOPartida voPartida = instanciaWS.iPartidas.findPartidaEnCurso(iConn, nombrePartida);					
+					VOPartida voPartida = instanciaWS.iPartidas.findPartidaCreada(iConn, nombrePartida);					
 					List<VOFigurasPartidas> listaFiguras = new LinkedList<VOFigurasPartidas>();
 					VOFigurasPartidas voManguera1 = new VOFigurasPartidas();
 					VOFigurasPartidas voManguera2 = new VOFigurasPartidas();

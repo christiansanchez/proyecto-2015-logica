@@ -28,7 +28,11 @@ public interface IDAOPartidas {
 	
 	public void eliminarPartida(IConexion iConn, int idPartida) throws EliminarPartidaException;
 	
+	public boolean hasPartidaCreada(IConexion iConn, String nombrePartida) throws ExistePartidaEnCursoException;
+	
 	public VOPartida findPartidaEnCurso(IConexion iConn, String nombrePartida) throws BuscarPartidasException;
+	
+	public VOPartida findPartidaCreada(IConexion iConn, String nombrePartida) throws BuscarPartidasException;
 	
 	public void agregarPartidaEnCurso(IConexion iConn, VOPartida voPartida) throws AgregarPartidaException;
 }
